@@ -32,13 +32,42 @@
 //        0 <= nums[i] <= 1000
 
 package playground.leetcode;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Math.max;
 
 public class HouseRobber2 {
     @org.jetbrains.annotations.NotNull
     @org.jetbrains.annotations.Contract(pure = true)
-    public static Integer maxRobbable(List<Integer> neighborHouseValues) {
-        return 0;
+    public static Integer maxRobbable(@NotNull List<Integer> neighborHouseValues) {
+        var currentHouseIndex = 2;
+        var totalHouses = neighborHouseValues.size();
+        var maxRobbable = new ArrayList<Integer>();
+        maxRobbable.add(0, neighborHouseValues.get(0));
+        maxRobbable.add(1, max(neighborHouseValues.get(0), neighborHouseValues.get(1)));
+        while(currentHouseIndex < totalHouses) {
+            var currentHouse = neighborHouseValues.get(currentHouseIndex);
+            var previousMaxValue = maxRobbable.get(currentHouseIndex - 1);
+            var previousMaxValueD2 = maxRobbable.get(currentHouseIndex - 2);
+            var currentWithD2 = currentHouse + previousMaxValueD2;
+            var shouldStealCurrent = currentWithD2 > previousMaxValue;
+            var maxRobbableForCurrentHouse = shouldStealCurrent?
+                    currentWithD2 :
+                    previousMaxValue;
+            maxRobbable.add(currentHouseIndex, maxRobbableForCurrentHouse);
+            currentHouseIndex++;
+        }
+        return maxRobbable.get(maxRobbable.size()-1);
+    }
+
+    public static @NotNull Integer maxRobbableInCircle(@NotNull List<Integer> neighborHouseValues) {
+        var setTakingFirst = neighborHouseValues.subList(1, neighborHouseValues.size());
+        var setTakingSecond = neighborHouseValues.subList(0, neighborHouseValues.size() - 1);
+        var maxTakingFirstHouse = maxRobbable(setTakingFirst);
+        var maxTakingSecondHouse = maxRobbable(setTakingSecond);
+        return max(maxTakingFirstHouse, maxTakingSecondHouse);
     }
 }
