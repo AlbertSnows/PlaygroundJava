@@ -12,10 +12,16 @@ public class NumberOfIslandsTest {
     @Test
     public void findNumberOfIslands() {
         var testCases = List.of(
-                Pair.of(List.of(1, 4, 2, 3),
-                        new LinkedList<>(List.of(1, 2, 3, 4))),
-                Pair.of(List.of(1, 5, 2, 4, 3),
-                        new LinkedList<>(List.of(1, 2, 3, 4, 5))));
+                Pair.of(1, List.of(
+                        List.of(1, 1, 1, 1, 0),
+                        List.of(1, 1, 0, 1, 0),
+                        List.of(1, 1, 0, 0, 0),
+                        List.of(0, 0, 0, 0, 0))),
+                Pair.of(3, List.of(
+                        List.of(1, 1, 0, 0, 0),
+                        List.of(1, 1, 0, 0, 0),
+                        List.of(0, 0, 1, 0, 0),
+                        List.of(0, 0, 0, 1, 1))));
         var outcome = testCases.stream()
                 .map(pair -> Pair.of(pair.getLeft(),
                         NumberOfIslands.findNumberOfIslands(pair.getRight())))
