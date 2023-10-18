@@ -55,27 +55,29 @@ public class ThreeSum {
         var uniqueFirstPivotIndexes = indexes.stream()
                 .filter(index -> {
                     var valueAtCurrentIndex = sortedNums.get(index);
-                    var atEnd = index == sortedNums.size() - 1;
-                    if(atEnd) {
+                    var atStart = index == 0;
+                    if(atStart) {
                         return true;
                     } else {
-                        var valueAtNextIndex = sortedNums.get(index + 1);
-                        return !valueAtCurrentIndex.equals(valueAtNextIndex);
+                        var valueAtPreviousIndex = sortedNums.get(index - 1);
+                        return !valueAtCurrentIndex.equals(valueAtPreviousIndex);
                     }
-                });
-        Function<Integer, Function<ArrayList<Integer>, ArrayList<Integer>>> addToList = uniqueIndex -> twoSum -> {
-            twoSum.add(uniqueIndex);
+                }).toList();
+        Function<Integer, Function<ArrayList<Integer>, ArrayList<Integer>>> addToList =
+                firstPivotIndex -> twoSum -> {
+            twoSum.add(sortedNums.get(firstPivotIndex));
             return twoSum;
         };
-        var twoSumsForEachFirstPivot = uniqueFirstPivotIndexes
-                .map(uniqueIndex -> Pair.of(uniqueIndex, findTwoSum(
-                        sortedNums.get(uniqueIndex),
-                        sortedNums.subList(uniqueIndex, sortedNums.size()))));
-        return twoSumsForEachFirstPivot
+        var twoSumsForEachFirstPivot = uniqueFirstPivotIndexes.stream()
+                .map(firstPivotIndex -> Pair.of(firstPivotIndex, findTwoSum(
+                        sortedNums.get(firstPivotIndex) * -1,
+                        sortedNums.subList(firstPivotIndex+1, sortedNums.size()))))
+                .toList();
+        return twoSumsForEachFirstPivot.stream()
                 .reduce(new ArrayList<>(), (threeSumsAcc, pair) -> {
-                    var uniqueIndex = pair.getLeft();
+                    var firstPivotIndex = pair.getLeft();
                     var twoSums = pair.getRight();
-                    var updatedSums = twoSums.stream().map(addToList.apply(uniqueIndex))
+                    var updatedSums = twoSums.stream().map(addToList.apply(firstPivotIndex))
                             .collect(Collectors.toCollection(ArrayList::new));
                     threeSumsAcc.addAll(updatedSums);
                     return threeSumsAcc;
