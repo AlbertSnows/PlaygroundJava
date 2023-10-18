@@ -11,9 +11,9 @@ public class ValidParenthesisTest {
     @Test
     public void validateParenthesisTest() {
         var testCases = List.of(
-                Pair.of(3, "abcabcbb"),
-                Pair.of(1, "bbbbb"),
-                Pair.of(3, "pwwkew"));
+                Pair.of(true, "()"),
+                Pair.of(true, "()[]{}"),
+                Pair.of(false, "(]"));
         var outcome = testCases.stream()
                 .map(pair -> Pair.of(pair.getLeft(),
                         ValidParenthesis.validateParenthesis(pair.getRight())))
