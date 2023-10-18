@@ -8,10 +8,24 @@
 plugins {
     id 'java-library'
     id 'application'
+    id 'idea'
 }
 
-//mainClassName = 'playground.core.Main'
+// needed for dependencies
+repositories {
+    mavenCentral()
+}
 
 application {
     mainClass = 'playground.core.Main'
+}
+
+dependencies {
+    implementation 'org.jetbrains:annotations:24.0.0'
+    testImplementation 'org.junit:junit-bom:5.7.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+}
+
+test {
+    useJUnitPlatform()
 }
