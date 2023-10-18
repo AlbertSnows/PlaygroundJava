@@ -14,7 +14,9 @@ public class HouseRobber2Test {
                 Pair.of(4, List.of(1, 2, 3, 1)),
                 Pair.of(3, List.of(1, 2, 3)));
         var outcome = testCases.stream()
-                .map(pair -> Pair.of(pair.getLeft(), HouseRobber2.maxRobbableInCircle(pair.getRight())));
+                .map(pair -> Pair.of(pair.getLeft(), HouseRobber2.maxRobbableInCircle(pair.getRight())))
+                .toList();
+        outcome.forEach(pair -> assertEquals(pair.getLeft(), pair.getRight()));
         outcome.forEach(pair -> System.out.println(pair.toString()));
     }
 }

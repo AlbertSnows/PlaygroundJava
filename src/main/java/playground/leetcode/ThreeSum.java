@@ -48,17 +48,18 @@ import java.util.stream.IntStream;
 
 public class ThreeSum {
     public static @NotNull @Unmodifiable ArrayList<ArrayList<Integer>> findThreeSum(List<Integer> numbers) {
-        Collections.sort(numbers);
-        var indexes = IntStream.rangeClosed(0, numbers.size())
+        var sortedNums = new ArrayList<>(numbers);
+        Collections.sort(sortedNums);
+        var indexes = IntStream.rangeClosed(0, sortedNums.size() -1)
                 .boxed().toList();
         var uniqueFirstPivotIndexes = indexes.stream()
                 .filter(index -> {
-                    var valueAtCurrentIndex = numbers.get(index);
-                    var atEnd = index == numbers.size() - 1;
+                    var valueAtCurrentIndex = sortedNums.get(index);
+                    var atEnd = index == sortedNums.size() - 1;
                     if(atEnd) {
                         return true;
                     } else {
-                        var valueAtNextIndex = numbers.get(index + 1);
+                        var valueAtNextIndex = sortedNums.get(index + 1);
                         return !valueAtCurrentIndex.equals(valueAtNextIndex);
                     }
                 });
@@ -68,8 +69,8 @@ public class ThreeSum {
         };
         var twoSumsForEachFirstPivot = uniqueFirstPivotIndexes
                 .map(uniqueIndex -> Pair.of(uniqueIndex, findTwoSum(
-                        numbers.get(uniqueIndex),
-                        numbers.subList(uniqueIndex, numbers.size()))));
+                        sortedNums.get(uniqueIndex),
+                        sortedNums.subList(uniqueIndex, sortedNums.size()))));
         return twoSumsForEachFirstPivot
                 .reduce(new ArrayList<>(), (threeSumsAcc, pair) -> {
                     var uniqueIndex = pair.getLeft();
