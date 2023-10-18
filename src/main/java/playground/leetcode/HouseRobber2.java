@@ -64,10 +64,10 @@ public class HouseRobber2 {
     }
 
     public static @NotNull Integer maxRobbableInCircle(@NotNull List<Integer> neighborHouseValues) {
-        var setTakingFirst = neighborHouseValues.subList(1, neighborHouseValues.size());
-        var setTakingSecond = neighborHouseValues.subList(0, neighborHouseValues.size() - 1);
-        var maxTakingFirstHouse = maxRobbable(setTakingFirst);
-        var maxTakingSecondHouse = maxRobbable(setTakingSecond);
-        return max(maxTakingFirstHouse, maxTakingSecondHouse);
+        var setSkippingFirst = neighborHouseValues.subList(1, neighborHouseValues.size());
+        var setSkippingSecond = neighborHouseValues.subList(0, neighborHouseValues.size() - 1);
+        var maxSkippingFirstHouse = maxRobbable(setSkippingFirst);
+        var maxSkippingSecondHouse = maxRobbable(setSkippingSecond);
+        return max(maxSkippingFirstHouse, maxSkippingSecondHouse);
     }
 }
