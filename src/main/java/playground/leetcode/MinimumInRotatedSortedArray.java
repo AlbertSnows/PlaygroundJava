@@ -11,18 +11,19 @@ public class MinimumInRotatedSortedArray {
     findMinimumInRotatedSortedArrayTest(@NotNull List<Integer> rotatedSortedList) {
         var leftIndex = 0;
         var rightIndex = rotatedSortedList.size() - 1;
-        while(leftIndex < rightIndex) {
+        var found = false;
+        while(leftIndex < rightIndex && !found) {
             var leftValue = rotatedSortedList.get(leftIndex);
             var rightValue = rotatedSortedList.get(rightIndex);
             var onLeftSide = leftValue < rightValue;
             var onRightSide = rightValue < leftValue;
             var diff = (rightIndex - leftIndex) / 2;
             if(onLeftSide) {
-                rightIndex = rightIndex - diff;
+                rightIndex = (rightIndex - diff) - 1;
             } else if(onRightSide) {
-                leftIndex = leftIndex + diff;
+                leftIndex = (leftIndex + diff) + 1;
             } else {
-                break;
+                found = true;
             }
          }
         return rotatedSortedList.get(leftIndex);
