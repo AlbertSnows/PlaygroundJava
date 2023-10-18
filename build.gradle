@@ -22,7 +22,6 @@ application {
 
 dependencies {
     implementation 'org.jetbrains:annotations:24.0.0'
-    testImplementation 'org.junit:junit-bom:5.7.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 }
 

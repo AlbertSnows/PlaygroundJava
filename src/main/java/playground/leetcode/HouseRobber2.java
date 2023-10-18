@@ -33,11 +33,12 @@
 
 package playground.leetcode;
 import java.util.ArrayList;
+import java.util.List;
 
 public class HouseRobber2 {
     @org.jetbrains.annotations.NotNull
     @org.jetbrains.annotations.Contract(pure = true)
-    public static Integer maxRobbable(ArrayList<Integer> neighborHouseValues) {
+    public static Integer maxRobbable(List<Integer> neighborHouseValues) {
         return 0;
     }
 }
