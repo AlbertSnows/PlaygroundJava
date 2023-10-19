@@ -2,13 +2,15 @@ package playground.assessment;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
-import playground.leetcode.MinimumInRotatedSortedArray;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MinimumChangesTest {
+    // to run this on the command line, run
+    // gradle :test --tests "playground.assessment.MinimumChangesTest.calcMinimumMovesTest"
+
     @Test
     public void calcMinimumMovesTest() {
         var testCases = List.of(
