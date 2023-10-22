@@ -1,7 +1,11 @@
 package playground.core;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
+import java.sql.Array;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
@@ -24,6 +28,50 @@ public class Main {
         // IntelliJ IDEA suggests fixing it.
         System.out.println("Hello and welcome!");
         // Press Shift+F10 or click the green arrow button in the gutter to run the code.
+        int g_nodes = 0;
+        List<Integer> gFrom = Arrays.asList(1, 2, 1, 3, 1, 2);
+        List<Integer> gTo = Arrays.asList(2, 3, 3, 5, 4, 6);
+        IntStream range = IntStream.range(0, gFrom.size() -1 );
+        HashMap<Integer, HashSet<Integer>> nodeRelationships = new HashMap<>();
+        for(int index : range.toArray()) {
+            int gFromVal = gFrom.get(index);
+            int gToVal = gTo.get(index);
+            boolean fromExists = nodeRelationships.containsKey(gFromVal);
+            boolean toExists = nodeRelationships.containsKey(gToVal);
+            if(fromExists) {
+                HashSet<Integer> list = nodeRelationships.get(gFromVal);
+                list.add(gToVal);
+                nodeRelationships.put(gFromVal, list);
+            } else {
+                nodeRelationships.put(gFromVal, new HashSet<>(gToVal));
+            }
+            if(toExists) {
+                HashSet<Integer> list = nodeRelationships.get(gToVal);
+                list.add(gFromVal);
+                nodeRelationships.put(gToVal, list);
+            } else {
+                nodeRelationships.put(gToVal, new HashSet<>(gFromVal));
+            }
+        }
+        HashSet<Integer> visited = new HashSet<>();
+        for(Map.Entry<Integer, HashSet<Integer>> pair : nodeRelationships.entrySet()) {
+            boolean info = dfs(nodeRelationships, visited, -1);
+        }
+
+    }
+
+    private static boolean dfs(HashMap<Integer, HashSet<Integer>> pair,
+                               HashSet<Integer> visited,
+                               Integer parent) {
+        for(Integer neighbor : pair.values()) {
+            boolean haveVisited = visited.contains(neighbor);
+            boolean notParent = !Objects.equals(neighbor, parent);
+            if(!haveVisited) {
+                dfs(neighbor, pair.Key());
+            } else if(notParent) {
+                //
+            }
+        }
 
     }
 
