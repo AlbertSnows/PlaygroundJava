@@ -1,4 +1,4 @@
-package playground.assessment;
+package playground.assessment.erz;
 
 import java.util.ArrayList;
 import java.util.Collections;

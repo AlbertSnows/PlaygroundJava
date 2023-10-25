@@ -2,6 +2,7 @@ package playground.assessment;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
+import playground.assessment.erz.MinimumChanges;
 
 import java.util.List;
 

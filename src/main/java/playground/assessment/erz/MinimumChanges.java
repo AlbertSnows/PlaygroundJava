@@ -1,4 +1,4 @@
-package playground.assessment;
+package playground.assessment.erz;
 
 import org.jetbrains.annotations.NotNull;
 
