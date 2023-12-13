@@ -11,10 +11,10 @@ import static co.unruly.control.result.Transformers.onSuccess;
  *
  * Usage isn't totally obvious from the implementation: to upcast a success to an Animal, for example, you need:
  * <code>
- *     using(TypeOf.<Animal>forSuccesses())
+ *     using(TypeOf.{@literal (<Animal>)}forSuccesses())
  * </code>
  *
- * That'll give you a <code>Function<Result<Bear, String>, Function<Animal, String>></code> (inferring
+ * That'll give you a {@code (Function<Result<Bear, String>, Function<Animal, String>>)} (inferring
  * the types Animal and String from context), which you can then use for mapping a Stream or use in
  * a Result then-operation chain.
  */

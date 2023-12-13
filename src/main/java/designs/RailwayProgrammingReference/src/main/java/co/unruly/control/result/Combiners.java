@@ -5,18 +5,34 @@ import java.util.function.Function;
 
 import static co.unruly.control.result.Result.success;
 
+/**
+ * interface for combining different data structures
+ */
 public interface Combiners {
 
     /**
      * Combines two Results into a single Result. If both arguments are a Success, then
      * it applies the given function to their values and returns a Success of it.
-     *
+     * @param <A> a
+     * @param <B> b
+     * @param <F> f
+     * @param secondArgument result to merge
+     * @return first failure
      * If either or both arguments are Failures, then this returns the first failure
      * it encountered.
      */
-    static <A, B, F> Function<Result<A, F>, MergeableResults<A, B, F>> combineWith(Result<B, F> secondArgument) {
+    @org.jetbrains.annotations.NotNull
+    @org.jetbrains.annotations.Contract(pure = true)
+    static <A, B, F> Function<Result<A, F>, MergeableResults<A, B, F>>
+    combineWith(Result<B, F> secondArgument) {
         // ugh ugh ugh we need an abstract class because otherwise it can't infer generics properly can i be sick now? ta
         return result -> new MergeableResults<A, B, F>() {
+            /**
+             *
+             * @param combiner combining mechanism
+             * @return an either
+             * @param <C> combiner
+             */
             @Override
             public <C> Result<C, F> using(BiFunction<A, B, C> combiner) {
                 return result.either(
