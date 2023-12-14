@@ -16,6 +16,9 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.iterate;
 
+/**
+ * interfaces for working with higher level functions
+ */
 @SuppressWarnings("unused")
 public interface HigherOrderFunctions {
 
@@ -64,11 +67,25 @@ public interface HigherOrderFunctions {
         };
     }
 
-    static <T> @NotNull Stream<Pair<Integer, T>> withIndices(Stream<T> items) {
+    /**
+     * @param items item stream
+     * @param <T> stream type
+     * @return a stream of KV pairs where k is the index and T is the value
+     */
+    static <T> @NotNull Stream<Pair<Integer, T>>
+    withIndices(Stream<T> items) {
         return zip(iterate(0, x -> x + 1), items);
     }
 
-    static <A, B> @NotNull Stream<Pair<A, B>> zip(Stream<A> a, Stream<B> b) {
+    /**
+     * @param a left stream
+     * @param b right stream
+     * @param <A> left type
+     * @param <B> right type
+     * @return zips the two streams into a pair
+     */
+    static <A, B> @NotNull Stream<Pair<A, B>>
+    zip(Stream<A> a, Stream<B> b) {
         return zip(a, b, Pair::of);
     }
 

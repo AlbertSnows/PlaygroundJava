@@ -168,9 +168,17 @@ public interface Comprehensions {
     }
 
 
-    static <F, S1, S2, SR> @NotNull Function<Result<Pair<S1, S2>, F>, Result<SR, F>> ifAllSucceeded(
-        BiFunction<S1, S2, SR> f
-    ) {
+    /**
+     * @param f test function
+     * @param <F> failure type
+     * @param <S1> left input
+     * @param <S2> right input
+     * @param <SR> success output
+     * @return a function that when passed a result with a pair-fail setup, returns
+     * applying that result to f
+     */
+    static <F, S1, S2, SR> @NotNull Function<Result<Pair<S1, S2>, F>, Result<SR, F>>
+    ifAllSucceeded(BiFunction<S1, S2, SR> f) {
         return onSuccess(onAll(f));
     }
 

@@ -25,22 +25,42 @@ public interface ErrorThrowingLambdas {
      */
     @FunctionalInterface
     interface ThrowingFunction<I, O, X extends Throwable> {
+        /**
+         * @param input input variable
+         * @return output of type O
+         * @throws X the exception type
+         */
         O apply(I input) throws X;
 
         default <T> ThrowingFunction<I, T, X> andThen(Function<O, T> nextFunction) {
             return x -> nextFunction.apply(apply(x));
         }
 
-        default <T> ThrowingFunction<T, O, X> compose(Function<T, I> nextFunction) {
+        /**
+         * @param nextFunction next function to
+         * @param <T> input type
+         * @return a function that can throw a runtime exception
+         * when provided with an input X, it will pass X into nextFunction, and then
+         * call the throwing function on the result
+         */
+        default <T> ThrowingFunction<T, O, X>
+        compose(Function<T, I> nextFunction) {
             return x -> apply(nextFunction.apply(x));
         }
 
         /**
          * Converts the provided function into a regular Function, where any thrown exceptions are
          * wrapped in a RuntimeException.
+         * @param f function that throws
+         * @param <I> input type
+         * @param <O> output type
+         * @param <X> exception type
+         * @return a function that expects an input X. X will be applied to f, and the result is
+         * wrapped in a try-catch block
          */
         @Contract(pure = true)
-        static <I, O, X extends Throwable> @NotNull Function<I, O> throwingRuntime(ThrowingFunction<I, O, X> f) {
+        static <I, O, X extends Throwable> @NotNull Function<I, O>
+        throwingRuntime(ThrowingFunction<I, O, X> f) {
             return x -> {
                 try {
                     return f.apply(x);
@@ -61,9 +81,15 @@ public interface ErrorThrowingLambdas {
         /**
          * Converts the provided consumer into a regular Consumer, where any thrown exceptions are
          * wrapped in a RuntimeException.
+         * @param p consumer that throws
+         * @param <T> input type
+         * @param <X> exception type
+         * @return a function that expects an input X. X is passed to p, and the
+         * result is wrapped in a try-catch block
          */
         @Contract(pure = true)
-        static <T, X extends Throwable> @NotNull Consumer<T> throwingRuntime(ThrowingConsumer<T, X> p) {
+        static <T, X extends Throwable> @NotNull Consumer<T>
+        throwingRuntime(ThrowingConsumer<T, X> p) {
             return x -> {
                 try {
                     p.accept(x);
@@ -105,12 +131,19 @@ public interface ErrorThrowingLambdas {
     interface ThrowingPredicate<T, X extends Throwable> {
         boolean test(T item) throws X;
 
+
         /**
          * Converts the provided predicate into a regular Predicate, where any thrown exceptions
          * are wrapped in a RuntimeException
+         * @param p predicate function that throws
+         * @param <T> input type
+         * @param <X> exception type
+         * @return function that takes an input, tests it against p, and throws a contained try/catch
+         * exception depending on the result
          */
         @Contract(pure = true)
-        static <T, X extends Throwable> @NotNull Predicate<T> throwingRuntime(ThrowingPredicate<T, X> p) {
+        static <T, X extends Throwable> @NotNull Predicate<T>
+        throwingRuntime(ThrowingPredicate<T, X> p) {
             return x -> {
                 try {
                     return p.test(x);
