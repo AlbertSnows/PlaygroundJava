@@ -182,15 +182,32 @@ public interface Comprehensions {
         return onSuccess(onAll(f));
     }
 
-    static <F, S1, S2, S3, SR> @NotNull Function<Result<Triple<S1, S2, S3>, F>, Result<SR, F>> ifAllSucceeded(
-        TriFunction<S1, S2, S3, SR> f
-    ) {
+    /**
+     * @param f tri function collapsor
+     * @param <F> failure type
+     * @param <S1> .
+     * @param <S2> .
+     * @param <S3> .
+     * @param <SR> result type
+     * @return dF(x -> y) where X is a result with success type triple and y is a result with a collapsed success type
+     */
+    static <F, S1, S2, S3, SR> @NotNull Function<Result<Triple<S1, S2, S3>, F>, Result<SR, F>>
+    ifAllSucceeded(TriFunction<S1, S2, S3, SR> f) {
         return onSuccess(onAll(f));
     }
 
-    static <F, S1, S2, S3, S4, SR> @NotNull Function<Result<Quad<S1, S2, S3, S4>, F>, Result<SR, F>> ifAllSucceeded(
-        QuadFunction<S1, S2, S3, S4, SR> f
-    ) {
+    /**
+     * @param f quad function to collapse
+     * @param <F> fail type
+     * @param <S1> .
+     * @param <S2> .
+     * @param <S3> .
+     * @param <S4> .
+     * @param <SR> collapsed type
+     * @return dF(x -> y) where x is a result with a success quad type and y is a result with a collapsed success type
+     */
+    static <F, S1, S2, S3, S4, SR> @NotNull Function<Result<Quad<S1, S2, S3, S4>, F>, Result<SR, F>>
+    ifAllSucceeded(QuadFunction<S1, S2, S3, S4, SR> f) {
         return onSuccess(onAll(f));
     }
 

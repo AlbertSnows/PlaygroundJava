@@ -14,6 +14,9 @@ public class FailureMatcher<S, F> extends TypeSafeDiagnosingMatcher<Result<S, F>
 
     private final Matcher<F> innerMatcher;
 
+    /**
+     * @param innerMatcher .
+     */
     public FailureMatcher(Matcher<F> innerMatcher) {
         this.innerMatcher = innerMatcher;
     }

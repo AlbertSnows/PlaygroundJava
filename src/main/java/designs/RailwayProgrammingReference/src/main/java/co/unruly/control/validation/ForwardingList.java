@@ -16,6 +16,9 @@ import java.util.stream.Stream;
  */
 public interface ForwardingList<T> extends List<T> {
 
+    /**
+     * @return delegate list
+     */
     List<T> delegate();
 
     default int size() {
