@@ -6,7 +6,6 @@ import static co.unruly.control.Piper.pipe;
 import static co.unruly.control.matchers.ResultMatchers.isFailureOf;
 import static co.unruly.control.matchers.ResultMatchers.isSuccessOf;
 import static co.unruly.control.result.Introducers.castTo;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class CastsTest {
