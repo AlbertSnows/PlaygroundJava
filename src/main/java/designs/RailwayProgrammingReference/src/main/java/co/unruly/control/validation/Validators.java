@@ -20,25 +20,61 @@ import static co.unruly.control.result.Result.success;
 import static co.unruly.control.result.Transformers.onFailure;
 import static co.unruly.control.result.Transformers.recover;
 
+/**
+ * interface for working with validation
+ */
 @SuppressWarnings("unused")
 public interface Validators {
 
+    /**
+     * @param validators arbitrary set of validators
+     * @param <T> input type
+     * @param <E> error type
+     * @return dF(x -> y) where dF represents the composition of the validators
+     * and x is the input that is threaded through all of them
+     */
     @Contract(pure = true)
     @SafeVarargs
-    static <T, E> @NotNull Validator<T, E> compose(Validator<T, E>... validators) {
+    static <T, E> @NotNull Validator<T, E>
+    compose(Validator<T, E>... validators) {
         return t -> Arrays.stream(validators).flatMap(v -> v.validate(t));
     }
 
-    static <T, E> @NotNull Validator<T, E> rejectIf(@NotNull Predicate<T> test, E error) {
+    /**
+     * @param test predicate function
+     * @param error error type
+     * @param <T> input type
+     * @param <E> error type
+     * @return dF(x -> y) where x yields error if passing test
+     */
+    static <T, E> @NotNull Validator<T, E>
+    rejectIf(@NotNull Predicate<T> test, E error) {
         return acceptIf(test.negate(), error);
     }
 
-    static <T, E> @NotNull Validator<T, E> rejectIf(@NotNull Predicate<T> test, Function<T, E> errorGenerator) {
+    /**
+     * @param test predicate function
+     * @param errorGenerator f(T -> E)
+     * @param <T> input type
+     * @param <E> error type
+     * @return dF(x -> y) where x yields output from errorGenerator
+     * if passing test
+     */
+    static <T, E> @NotNull Validator<T, E>
+    rejectIf(@NotNull Predicate<T> test, Function<T, E> errorGenerator) {
         return acceptIf(test.negate(), errorGenerator);
     }
 
+    /**
+     * @param test predicate function
+     * @param error error type
+     * @param <T> input type
+     * @param <E> error type
+     * @return dF(x -> y) where x yields error if failing test
+     */
     @Contract(pure = true)
-    static <T, E> @NotNull Validator<T, E> acceptIf(Predicate<T> test, E error) {
+    static <T, E> @NotNull Validator<T, E>
+    acceptIf(Predicate<T> test, E error) {
         return acceptIf(test, t -> error);
     }
 
@@ -57,16 +93,39 @@ public interface Validators {
         return t -> test.test(t) ? validator.validate(t) : Stream.empty();
     }
 
+    /**
+     * @param validator maps input to validation outcome
+     * @param errorMapper f((T, E) -> E1) maps input and error outcome to new error type
+     * @param <T> input type
+     * @param <E> input error type
+     * @param <E1> output error type
+     * @return dF(x -> y) where x is validated and mapped with any yielded errors into
+     * the mapper
+     */
     @Contract(pure = true)
-    static <T, E, E1> @NotNull Validator<T, E1> mappingErrors(Validator<T, E> validator, BiFunction<T, E, E1> errorMapper) {
+    static <T, E, E1> @NotNull Validator<T, E1>
+    mappingErrors(Validator<T, E> validator, BiFunction<T, E, E1> errorMapper) {
         return t -> validator.validate(t).map(e -> errorMapper.apply(t, e));
     }
 
     @Contract(pure = true)
-    static <T, T1, E> @NotNull Validator<T, E> on(Function<T, T1> accessor, Validator<T1, E> innerValidator) {
+    static <T, T1, E> @NotNull Validator<T, E>
+    on(Function<T, T1> accessor, Validator<T1, E> innerValidator) {
         return t -> innerValidator.validate(accessor.apply(t));
     }
 
+    /**
+     * @param accessor function that converts T -> T1 or throws
+     * @param onException f(exception -> E), called when accessor throws
+     * @param innerValidator validates T1 or yields E
+     * @param <T> input type
+     * @param <T1> output type
+     * @param <E> error type
+     * @param <X> exception type
+     * @return dF(x -> y) where x is provided to accessor and then validated
+     * y is the output of the validation wrapped in a try-catch where
+     * the failure maps the exception to an error state
+     */
     @Contract(pure = true)
     static <T, T1, E, X extends Exception> @NotNull Validator<T, E>
     tryOn(ThrowingFunction<T, T1, X> accessor, Function<Exception, E> onException, Validator<T1, E> innerValidator) {
@@ -79,12 +138,30 @@ public interface Validators {
         };
     }
 
+    /**
+     * @param iterator f(x1 -> Iterable(x2))
+     * @param innerValidator f(x2 -> E)
+     * @param <T> input type
+     * @param <T1> output type
+     * @param <E> error type
+     * @return validator outcome
+     */
     @Contract(pure = true)
     static <T, T1, E> @NotNull Validator<T, E>
     onEach(Function<T, Iterable<T1>> iterator, Validator<T1, E> innerValidator) {
-        return t -> StreamSupport.stream(iterator.apply(t).spliterator(), false).flatMap(innerValidator::validate);
+        return t -> StreamSupport.stream(iterator.apply(t).spliterator(), false)
+                .flatMap(innerValidator::validate);
     }
 
+    /**
+     * @param validatorWhichThrowsRuntimeExceptions validator function that throws
+     * @param errorMapper f(exception -> error type)
+     * @param <T> success type
+     * @param <E> error type
+     * @return dF(x -> y) where x is an input to our validator function
+     * and y is the result of the validation or a stream of the error mapper
+     * if an exception is thrown
+     */
     @Contract(pure = true)
     static <T, E> @NotNull Validator<T, E>
     tryTo(Validator<T, E> validatorWhichThrowsRuntimeExceptions, Function<RuntimeException, E> errorMapper) {
