@@ -8,6 +8,10 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * @param <T> input
+ * @param <E> errors
+ */
 @FunctionalInterface
 public interface Validator<T, E> extends Function<T, Result<T, FailedValidation<T, E>>> {
 
@@ -18,6 +22,10 @@ public interface Validator<T, E> extends Function<T, Result<T, FailedValidation<
             : Result.failure(new FailedValidation<T, E>(item, errors));
     }
 
+    /**
+     * @param item input
+     * @return stream of errors E
+     */
     Stream<E> validate(T item);
 
 }
