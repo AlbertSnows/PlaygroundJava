@@ -52,12 +52,20 @@ public interface TypeOf {
         return result -> result.then(Transformers.onFailure(HigherOrderFunctions::upcast));
     }
 
+    /**
+     * @param <T> input type
+     * @return null
+     */
     // we don't use the return value - all this does is provide type context
     @Contract(pure = true)
     static <T> @Nullable ForSuccesses<T> forSuccesses() {
         return null;
     }
 
+    /**
+     * @param <T> input type
+     * @return null
+     */
     // we don't use the return value - all this does is provide type context
     @Contract(pure = true)
     static <T> @Nullable ForFailures<T> forFailures() {
