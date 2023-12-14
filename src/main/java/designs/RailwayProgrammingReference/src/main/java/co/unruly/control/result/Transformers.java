@@ -89,18 +89,19 @@ public interface Transformers {
      * to that success - generating a new Result - and returns that Result. Otherwise, returns the
      * original failure.
      * @param mappingFunction to use on success
-     * @param <IS> input success
-     * @param <OS> output success
+     * @param <InputSuccess> input success
+     * @param <OutputSuccess> output success
      * @param <WideFailure> parent failure type
      * @param <NarrowFailure> child failure type
-     * @return dF(x -> y) where y uses the mapping function if x is a success
+     * @return dF(R(InputSuccess, WF) -> R(OutputSuccess, WF))
      */
     @Contract(pure = true)
-    static <IS, OS, WideFailure, NarrowFailure extends WideFailure> @NotNull
-            Function<Result<IS, WideFailure>, Result<OS, WideFailure>>
-    attempt(Function<IS, Result<OS, NarrowFailure>> mappingFunction) {
+    static <InputSuccess, OutputSuccess, WideFailure, NarrowFailure extends WideFailure> @NotNull
+            Function<Result<InputSuccess, WideFailure>, Result<OutputSuccess, WideFailure>>
+    attempt(Function<InputSuccess, Result<OutputSuccess, NarrowFailure>> mappingFunction) {
         Function<NarrowFailure, WideFailure> upcaster = HigherOrderFunctions::upcast;
-        Function<Result<OS, NarrowFailure>, Result<OS, WideFailure>> upcastOnFailure = onFailure(upcaster);
+        Function<Result<OutputSuccess, NarrowFailure>, Result<OutputSuccess, WideFailure>> upcastOnFailure
+                = onFailure(upcaster);
         return r -> r.either(mappingFunction.andThen(upcastOnFailure), Result::failure);
     }
 
@@ -109,12 +110,14 @@ public interface Transformers {
      * to that failure. Otherwise, returns the original success.
      * @param mappingFunction to map the failure against
      * @param <S> success type
-     * @param <IF> input failure type
-     * @param <OF> output failure type
-     * @return dF(x -> y) where y uses the mapping function if x is a failure
+     * @param <InputFailure> input failure type
+     * @param <OutputFailure> output failure type
+     * @return dF(R(S, IF) -> R(S, OF)) where the output uses
+     * the mapping function if x is a failure
      */
-    static <S, IF, OF> @NotNull Function<Result<S, IF>, Result<S, OF>>
-    onFailure(@NotNull Function<IF, OF> mappingFunction) {
+    static <S, InputFailure, OutputFailure> @NotNull
+            Function<Result<S, InputFailure>, Result<S, OutputFailure>>
+    onFailure(@NotNull Function<InputFailure, OutputFailure> mappingFunction) {
         return recover(mappingFunction.andThen(Result::failure));
     }
 

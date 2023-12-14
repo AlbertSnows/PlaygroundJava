@@ -27,29 +27,35 @@ public interface TypeOf {
     /**
      * Generalises the success type for a Result to an appropriate superclass.
      * @param dummy class for overload differentiation
-     * @param <T> success parent type
+     * @param <WideSuccess> success parent type
      * @param <F> failure type
-     * @param <S> success child type
-     * @return function that upcasts S to T
+     * @param <NarrowSuccess> success child type
+     * @return f(R(NS, F) -> R(WS, F))
      */
     @Contract(pure = true)
-    static <T, F, S extends T> @NotNull Function<Result<S, F>, Result<T, F>>
-    using(ForSuccesses<T> dummy) {
-        return result -> result.then(onSuccess(HigherOrderFunctions::upcast));
+    static <WideSuccess, F, NarrowSuccess extends WideSuccess> @NotNull
+            Function<Result<NarrowSuccess, F>, Result<WideSuccess, F>>
+    using(ForSuccesses<WideSuccess> dummy) {
+        Function<Result<NarrowSuccess, F>, Result<WideSuccess, F>> upcastSuccess
+                = onSuccess(HigherOrderFunctions::upcast);
+        return result -> result.then(upcastSuccess);
     }
 
     /**
      * Generalises the failure type for a Result to an appropriate superclass.
      * @param dummy class for overload differentiation
      * @param <S> success type
-     * @param <T> failure parent type
-     * @param <F> failure child type
+     * @param <WideType>> failure parent type
+     * @param <NarrowType> failure child type
      * @return result with failure upcasted
      */
     @Contract(pure = true)
-    static <S, T, F extends T> @NotNull Function<Result<S, F>, Result<S, T>>
-    using(ForFailures<T> dummy) {
-        return result -> result.then(Transformers.onFailure(HigherOrderFunctions::upcast));
+    static <S, WideType, NarrowType extends WideType> @NotNull
+            Function<Result<S, NarrowType>, Result<S, WideType>>
+    using(ForFailures<WideType> dummy) {
+        Function<Result<S, NarrowType>, Result<S, WideType>> upcastFailure
+                = Transformers.onFailure(HigherOrderFunctions::upcast);
+        return result -> result.then(upcastFailure);
     }
 
     /**
