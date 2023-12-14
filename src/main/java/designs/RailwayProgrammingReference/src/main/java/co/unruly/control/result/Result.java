@@ -127,11 +127,12 @@ public abstract class Result<S, F> implements Serializable {
      * }
      * </pre>
      * @param biMapper function to apply result to
-     * @param <T> parent type
-     * @param <T2> child type
-     * @return parent type of applying the mapper of result to T
+     * @param <WideType> parent type
+     * @param <NarrowType> child type
+     * @return parent type of applying the mapper of result to WideType
      */
-    public <T, T2 extends T> T then(@NotNull Function<Result<S, F>, T2> biMapper) {
+    public <WideType, NarrowType extends WideType> WideType
+    then(@NotNull Function<Result<S, F>, NarrowType> biMapper) {
         return biMapper.apply(this);
     }
 

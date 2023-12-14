@@ -25,7 +25,7 @@ public interface Resolvers {
     /**
      * Takes a Result where both success and failure types are the same, and returns
      * either the success or failure value as appropriate
-     * @param <T> .
+     * @param <T> input type
      * @return T
      */
     @Contract(pure = true)

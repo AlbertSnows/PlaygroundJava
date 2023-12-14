@@ -91,16 +91,17 @@ public interface Transformers {
      * @param mappingFunction to use on success
      * @param <IS> input success
      * @param <OS> output success
-     * @param <F> parent failure type
-     * @param <OF> child failure type
+     * @param <WideFailure> parent failure type
+     * @param <NarrowFailure> child failure type
      * @return dF(x -> y) where y uses the mapping function if x is a success
      */
     @Contract(pure = true)
-    static <IS, OS, F, OF extends F> @NotNull Function<Result<IS, F>, Result<OS, F>>
-    attempt(Function<IS, Result<OS, OF>> mappingFunction) {
-        return r -> r.either(
-                mappingFunction.andThen(onFailure((Function<OF, F>) HigherOrderFunctions::upcast)),
-                Result::failure);
+    static <IS, OS, WideFailure, NarrowFailure extends WideFailure> @NotNull
+            Function<Result<IS, WideFailure>, Result<OS, WideFailure>>
+    attempt(Function<IS, Result<OS, NarrowFailure>> mappingFunction) {
+        Function<NarrowFailure, WideFailure> upcaster = HigherOrderFunctions::upcast;
+        Function<Result<OS, NarrowFailure>, Result<OS, WideFailure>> upcastOnFailure = onFailure(upcaster);
+        return r -> r.either(mappingFunction.andThen(upcastOnFailure), Result::failure);
     }
 
     /**
