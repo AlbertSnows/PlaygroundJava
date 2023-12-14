@@ -1,5 +1,8 @@
 package co.unruly.control.result;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.Function;
@@ -25,28 +28,32 @@ public abstract class Result<S, F> implements Serializable {
     /**
      * Creates a new Success
      */
-    public static <S, F> Result<S, F> success(S value) {
+    @Contract("_ -> new")
+    public static <S, F> @NotNull Result<S, F> success(S value) {
         return new Success<>(value);
     }
 
     /**
      * Creates a new Success, taking the failure type for contexts where it can't be inferred.
      */
-    public static <S, F> Result<S, F> success(S value, Class<F> failureType) {
+    @Contract("_, _ -> new")
+    public static <S, F> @NotNull Result<S, F> success(S value, Class<F> failureType) {
         return new Success<>(value);
     }
 
     /**
      * Creates a new Failure
      */
-    public static <S, F> Result<S, F> failure(F error) {
+    @Contract("_ -> new")
+    public static <S, F> @NotNull Result<S, F> failure(F error) {
         return new Failure<>(error);
     }
 
     /**
      * Creates a new Failure, taking the success type for contexts where it can't be inferred.
      */
-    public static <S, F> Result<S, F> failure(F error, Class<S> successType) {
+    @Contract("_, _ -> new")
+    public static <S, F> @NotNull Result<S, F> failure(F error, Class<S> successType) {
         return new Failure<>(error);
     }
 
@@ -96,7 +103,7 @@ public abstract class Result<S, F> implements Serializable {
      * }
      * </pre>
      */
-    public <T, T2 extends T> T then(Function<Result<S, F>, T2> biMapper) {
+    public <T, T2 extends T> T then(@NotNull Function<Result<S, F>, T2> biMapper) {
         return biMapper.apply(this);
     }
 
@@ -108,12 +115,13 @@ public abstract class Result<S, F> implements Serializable {
         }
 
         @Override
-        public <S, S1 extends S, S2 extends S> S either(Function<L, S1> onSuccess, Function<R, S2> onFailure) {
+        public <S, S1 extends S, S2 extends S> S either(@NotNull Function<L, S1> onSuccess, Function<R, S2> onFailure) {
             return onSuccess.apply(value);
         }
 
+        @Contract(pure = true)
         @Override
-        public String toString() {
+        public @NotNull String toString() {
             return "Success{" + value + '}';
         }
 
@@ -139,12 +147,13 @@ public abstract class Result<S, F> implements Serializable {
         }
 
         @Override
-        public <S, S1 extends S, S2 extends S> S either(Function<L, S1> onSuccess, Function<R, S2> onFailure) {
+        public <S, S1 extends S, S2 extends S> S either(Function<L, S1> onSuccess, @NotNull Function<R, S2> onFailure) {
             return onFailure.apply(value);
         }
 
+        @Contract(pure = true)
         @Override
-        public String toString() {
+        public @NotNull String toString() {
             return "Failure{" + value + '}';
         }
 
