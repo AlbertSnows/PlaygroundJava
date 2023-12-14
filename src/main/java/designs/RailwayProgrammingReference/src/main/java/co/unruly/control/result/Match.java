@@ -72,13 +72,25 @@ public class Match {
                 .resolve();
     }
 
+    /**
+     * @param <I>
+     * @param <O>
+     */
     @FunctionalInterface
     public interface MatchAttempt<I, O> {
+        /**
+         * @param baseCase .
+         * @return basecase
+         */
         Function<I, O> otherwise(Function<I, O> baseCase);
     }
 
     @FunctionalInterface
     public interface BoundMatchAttempt<I, O> {
+        /**
+         * @param baseCase .
+         * @return output
+         */
         O otherwise(Function<I, O> baseCase);
     }
 }
