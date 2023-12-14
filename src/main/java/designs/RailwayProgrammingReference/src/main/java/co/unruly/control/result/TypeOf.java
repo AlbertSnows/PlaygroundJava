@@ -72,10 +72,16 @@ public interface TypeOf {
         return null;
     }
 
+    /**
+     * @param <T> input type
+     */
     // this class only exists, so we can differentiate the overloads of using()
     // we don't even instantiate it
     class ForSuccesses<T> { }
 
+    /**
+     * @param <T> input type
+     */
     // this class only exists, so we can differentiate the overloads of using()
     // we don't even instantiate it
     class ForFailures<T> { }
