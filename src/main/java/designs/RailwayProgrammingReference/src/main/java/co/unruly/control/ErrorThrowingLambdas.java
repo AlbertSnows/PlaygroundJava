@@ -1,5 +1,8 @@
 package co.unruly.control;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -36,7 +39,8 @@ public interface ErrorThrowingLambdas {
          * Converts the provided function into a regular Function, where any thrown exceptions are
          * wrapped in a RuntimeException.
          */
-        static <I, O, X extends Throwable> Function<I, O> throwingRuntime(ThrowingFunction<I, O, X> f) {
+        @Contract(pure = true)
+        static <I, O, X extends Throwable> @NotNull Function<I, O> throwingRuntime(ThrowingFunction<I, O, X> f) {
             return x -> {
                 try {
                     return f.apply(x);
@@ -58,7 +62,8 @@ public interface ErrorThrowingLambdas {
          * Converts the provided consumer into a regular Consumer, where any thrown exceptions are
          * wrapped in a RuntimeException.
          */
-        static <T, X extends Throwable> Consumer<T> throwingRuntime(ThrowingConsumer<T, X> p) {
+        @Contract(pure = true)
+        static <T, X extends Throwable> @NotNull Consumer<T> throwingRuntime(ThrowingConsumer<T, X> p) {
             return x -> {
                 try {
                     p.accept(x);
@@ -80,7 +85,9 @@ public interface ErrorThrowingLambdas {
          * Converts the provided bifunction into a regular BiFunction, where any thrown exceptions
          * are wrapped in a RuntimeException
          */
-        static <A, B, R, X extends Throwable> BiFunction<A, B, R> throwingRuntime(ThrowingBiFunction<A, B, R, X> f) {
+        @Contract(pure = true)
+        static <A, B, R, X extends Throwable> @NotNull BiFunction<A, B, R>
+        throwingRuntime(ThrowingBiFunction<A, B, R, X> f) {
             return (a, b) -> {
                 try {
                     return f.apply(a, b);
@@ -102,7 +109,8 @@ public interface ErrorThrowingLambdas {
          * Converts the provided predicate into a regular Predicate, where any thrown exceptions
          * are wrapped in a RuntimeException
          */
-        static <T, X extends Throwable> Predicate<T> throwingRuntime(ThrowingPredicate<T, X> p) {
+        @Contract(pure = true)
+        static <T, X extends Throwable> @NotNull Predicate<T> throwingRuntime(ThrowingPredicate<T, X> p) {
             return x -> {
                 try {
                     return p.test(x);
