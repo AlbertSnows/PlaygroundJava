@@ -34,7 +34,15 @@ public interface Comprehensions {
         return quad -> quad.then(f);
     }
 
-    static <L, R> Optional<Pair<L, R>> allOf(@NotNull Optional<L> maybeLeft, Optional<R> maybeRight) {
+    /**
+     * @param maybeLeft left val
+     * @param maybeRight right val
+     * @param <L> type l
+     * @param <R> type r
+     * @return pair of left and right exists
+     */
+    static <L, R> Optional<Pair<L, R>>
+    allOf(@NotNull Optional<L> maybeLeft, Optional<R> maybeRight) {
         return maybeLeft.flatMap(left ->
             maybeRight.map(right ->
                 Pair.of(left, right)));
@@ -48,6 +56,17 @@ public interface Comprehensions {
                                 Triple.of(first, second, third))));
     }
 
+    /**
+     * @param maybeFirst optional first
+     * @param maybeSecond second
+     * @param maybeThird third
+     * @param maybeFourth fourth
+     * @param <A> type a
+     * @param <B> type b
+     * @param <C> type c
+     * @param <D> type d
+     * @return quad tuple
+     */
     static <A, B, C, D> Optional<Quad<A, B, C, D>>
     allOf(@NotNull Optional<A> maybeFirst, Optional<B> maybeSecond, Optional<C> maybeThird, Optional<D> maybeFourth) {
         return maybeFirst.flatMap(first ->
@@ -57,12 +76,31 @@ public interface Comprehensions {
                                         Quad.of(first, second, third, fourth)))));
     }
 
-    static <F, LS, RS> Result<Pair<LS, RS>, F> allOf(@NotNull Result<LS, F> left, Result<RS, F> right) {
+    /**
+     * @param left left result
+     * @param right right result
+     * @param <F> failure
+     * @param <LS> left side of pair
+     * @param <RS> right side of pair
+     * @return pair of left and right success
+     */
+    static <F, LS, RS> Result<Pair<LS, RS>, F>
+    allOf(@NotNull Result<LS, F> left, Result<RS, F> right) {
         return left.then(attempt(l ->
             right.then(onSuccess(r ->
                 Pair.of(l, r)))));
     }
 
+    /**
+     * @param first |
+     * @param second |
+     * @param third |
+     * @param <F> |
+     * @param <S1> |
+     * @param <S2> |
+     * @param <S3> |
+     * @return tuple of three successes
+     */
     static <F, S1, S2, S3> Result<Triple<S1, S2, S3>, F>
     allOf(@NotNull Result<S1, F> first, Result<S2, F> second, Result<S3, F> third) {
         return  first.then(attempt(firstValue ->

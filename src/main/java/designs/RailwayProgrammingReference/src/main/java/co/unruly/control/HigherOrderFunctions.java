@@ -1,6 +1,8 @@
 package co.unruly.control;
 
 import co.unruly.control.pair.Pair;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -19,7 +21,8 @@ public interface HigherOrderFunctions {
     /**
      * Takes a BiFunction, and reverses the order of the arguments
      */
-    static <A, B, R> BiFunction<B, A, R> flip(BiFunction<A, B, R> f) {
+    @Contract(pure = true)
+    static <A, B, R> @NotNull BiFunction<B, A, R> flip(BiFunction<A, B, R> f) {
         return (a, b) -> f.apply(b, a);
     }
 
@@ -35,7 +38,7 @@ public interface HigherOrderFunctions {
      * Takes a Stream of functions (which take and return the same type) and composes
      * them into a single function, applying the provided functions in order
      */
-    static <T> Function<T, T> compose(Stream<Function<T, T>> functions) {
+    static <T> Function<T, T> compose(@NotNull Stream<Function<T, T>> functions) {
         return functions.reduce(identity(), Function::andThen);
     }
 
@@ -50,30 +53,32 @@ public interface HigherOrderFunctions {
     /**
      * Turns a Consumer into a Function which applies the consumer and returns the input
      */
-    static <T> Function<T, T> peek(Consumer<T> action) {
+    @Contract(pure = true)
+    static <T> @NotNull Function<T, T> peek(Consumer<T> action) {
         return t -> {
             action.accept(t);
             return t;
         };
     }
 
-    static <T> Stream<Pair<Integer, T>> withIndices(Stream<T> items) {
+    static <T> @NotNull Stream<Pair<Integer, T>> withIndices(Stream<T> items) {
         return zip(iterate(0, x -> x + 1), items);
     }
 
-    static <A, B> Stream<Pair<A, B>> zip(Stream<A> a, Stream<B> b) {
+    static <A, B> @NotNull Stream<Pair<A, B>> zip(Stream<A> a, Stream<B> b) {
         return zip(a, b, Pair::of);
     }
 
     /**
      * Zips two streams together using the zipper function, resulting in a single stream of
      * items from each stream combined using the provided function.
-     *
+     * <p>
      * The resultant stream will have the length of the shorter of the two input streams.
-     *
-     * Sourced from https://stackoverflow.com/questions/17640754/zipping-streams-using-jdk8-with-lambda-java-util-stream-streams-zip
+     * <p>
+     * Sourced from
+     * <a href="https://stackoverflow.com/questions/17640754/zipping-streams-using-jdk8-with-lambda-java-util-stream-streams-zip">here</a>
      */
-    static <A , B, C> Stream<C> zip(Stream<A> a, Stream<B> b, BiFunction<A, B, C> zipper) {
+    static <A , B, C> @NotNull Stream<C> zip(Stream<A> a, Stream<B> b, BiFunction<A, B, C> zipper) {
         Objects.requireNonNull(zipper);
         Spliterator<? extends A> aSpliterator = Objects.requireNonNull(a).spliterator();
         Spliterator<? extends B> bSpliterator = Objects.requireNonNull(b).spliterator();
