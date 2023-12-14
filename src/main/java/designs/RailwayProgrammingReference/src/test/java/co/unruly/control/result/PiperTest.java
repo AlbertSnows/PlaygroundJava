@@ -12,7 +12,6 @@ import static co.unruly.control.result.Recover.ifIs;
 import static co.unruly.control.result.Introducers.tryTo;
 import static co.unruly.control.result.Transformers.attempt;
 import static co.unruly.control.result.Transformers.onFailure;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class PiperTest {
