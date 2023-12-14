@@ -9,11 +9,12 @@ import java.util.function.Predicate;
  * A collection of functional interfaces which throw, and convenience functions to wrap them
  * so any thrown Throwables are converted to RuntimeExceptions so they can be used where
  * non-throwing functional interfaces are required
- *
+ * <p>
  * Catching errors in the general case is not recommended, but there are specific errors
  * which are contextually reasonable to catch. Therefore, this wider capability exists
  * separately and should be used judiciously.
  */
+@SuppressWarnings("unused")
 public interface ErrorThrowingLambdas {
 
     /**

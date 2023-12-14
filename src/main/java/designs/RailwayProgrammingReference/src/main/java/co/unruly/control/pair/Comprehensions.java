@@ -20,18 +20,45 @@ import static co.unruly.control.result.Transformers.onSuccess;
 @SuppressWarnings({"optional", "OptionalUsedAsFieldOrParameterType"})
 public interface Comprehensions {
 
+    /**
+     * @param f function to apply pair to
+     * @param <L> left
+     * @param <R> right
+     * @param <T> return type
+     * @return function that applies bifunction to the provided pair
+     */
     @Contract(pure = true)
-    static <L, R, T> @NotNull Function<Pair<L, R>, T> onAll(BiFunction<L, R, T> f) {
+    static <L, R, T> @NotNull Function<Pair<L, R>, T>
+    onAll(BiFunction<L, R, T> f) {
         return pair -> pair.then(f);
     }
 
+    /**
+     * @param f the tri function to use
+     * @param <A> .
+     * @param <B> .
+     * @param <C> .
+     * @param <T> return type
+     * @return a function that will apply f to the passed in triple
+     */
     @Contract(pure = true)
-    static <A, B, C, T> @NotNull Function<Triple<A, B, C>, T> onAll(TriFunction<A, B, C, T> f) {
+    static <A, B, C, T> @NotNull Function<Triple<A, B, C>, T>
+    onAll(TriFunction<A, B, C, T> f) {
         return triple -> triple.then(f);
     }
 
+    /**
+     * @param f the quad function to use
+     * @param <A> .
+     * @param <B> .
+     * @param <C> .
+     * @param <D> .
+     * @param <T> return type
+     * @return a function that takes a quad and applies the quad function to that quad
+     */
     @Contract(pure = true)
-    static <A, B, C, D, T> @NotNull Function<Quad<A, B, C, D>, T> onAll(QuadFunction<A, B, C, D, T> f) {
+    static <A, B, C, D, T> @NotNull Function<Quad<A, B, C, D>, T>
+    onAll(QuadFunction<A, B, C, D, T> f) {
         return quad -> quad.then(f);
     }
 
@@ -49,6 +76,15 @@ public interface Comprehensions {
                 Pair.of(left, right)));
     }
 
+    /**
+     * @param maybeFirst .
+     * @param maybeSecond .
+     * @param maybeThird .
+     * @param <A> .
+     * @param <B> .
+     * @param <C> .
+     * @return tuple of values of three optionals
+     */
     static <A, B, C> Optional<Triple<A, B, C>>
     allOf(@NotNull Optional<A> maybeFirst, Optional<B> maybeSecond, Optional<C> maybeThird) {
         return maybeFirst.flatMap(first ->
@@ -110,6 +146,18 @@ public interface Comprehensions {
                             Triple.of(firstValue, secondValue, thirdValue)))))));
     }
 
+    /**
+     * @param first .
+     * @param second .
+     * @param third .
+     * @param fourth .
+     * @param <F> .
+     * @param <S1> .
+     * @param <S2> .
+     * @param <S3> .
+     * @param <S4> .
+     * @return collapses success states of four results to one
+     */
     static <F, S1, S2, S3, S4> Result<Quad<S1, S2, S3, S4>, F>
     allOf(@NotNull Result<S1, F> first, Result<S2, F> second, Result<S3, F> third, Result<S4, F> fourth) {
         return  first.then(attempt(firstValue ->

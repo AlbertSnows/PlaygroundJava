@@ -52,6 +52,11 @@ public interface Combiners {
      */
     @FunctionalInterface
     interface MergeableResults<A, B, F>  {
+        /**
+         * @param combiner combining function
+         * @param <C> success combiner
+         * @return result with the combined result as the success and fail as fail
+         */
         <C> Result<C, F> using(BiFunction<A, B, C> combiner);
     }
 }

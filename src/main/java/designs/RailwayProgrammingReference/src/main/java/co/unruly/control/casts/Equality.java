@@ -7,6 +7,9 @@ import static co.unruly.control.result.Introducers.exactCastTo;
 import static co.unruly.control.result.Resolvers.ifFailed;
 import static co.unruly.control.result.Transformers.onSuccess;
 
+/**
+ * Equality testing interface
+ */
 public interface Equality {
 
     static <T> boolean areEqual(T self, Object other, BiPredicate<T, T> equalityChecker) {
