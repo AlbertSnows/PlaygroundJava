@@ -1,6 +1,7 @@
 package examples;
 
 import co.unruly.control.result.Result;
+import org.jetbrains.annotations.NotNull;
 
 import static co.unruly.control.result.Resolvers.collapse;
 import static co.unruly.control.result.Result.failure;
@@ -9,9 +10,14 @@ import static co.unruly.control.result.Transformers.attempt;
 import static co.unruly.control.result.Transformers.onSuccess;
 import static java.lang.String.format;
 
+@SuppressWarnings("unused")
 public class NovelErrorHandling {
 
-    public static String novelSales(Author author, Publisher publisher, Editor editor, Retailer retailer) {
+    public static String
+    novelSales(@NotNull Author author,
+               @NotNull Publisher publisher,
+               @NotNull Editor editor,
+               @NotNull Retailer retailer) {
         return author.getIdea()
                 .then(attempt(publisher::getAdvance))
                 .then(attempt(author::writeNovel))
@@ -23,7 +29,7 @@ public class NovelErrorHandling {
     }
 
     public static class Author {
-        private Result<Idea, String> idea;
+        private final Result<Idea, String> idea;
         private final int skill;
         private final int lifestyleCosts;
 
