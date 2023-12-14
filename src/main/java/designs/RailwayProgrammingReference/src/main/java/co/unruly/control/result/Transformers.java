@@ -22,11 +22,11 @@ public interface Transformers {
     /**
      * Returns a function which takes a Result and, if it's a success, applies the mapping value to that
      * success, otherwise returning the original failure.
-     * @param mappingFunction
+     * @param mappingFunction to pipe the success
      * @param <IS> input success
      * @param <OS> output success
      * @param <F> failure type
-     * @return
+     * @return dF(x -> y) where y uses the mapping function if x is a success
      */
     static <IS, OS, F> @NotNull Function<Result<IS, F>, Result<OS, F>>
     onSuccess(@NotNull Function<IS, OS> mappingFunction) {
@@ -35,10 +35,10 @@ public interface Transformers {
 
     /**
      * Returns a Consumer which takes a Result and, if it's a Success, passes it to the provided consumer.
-     * @param consumer
+     * @param consumer to use on success
      * @param <S> success
      * @param <F> failure type
-     * @return
+     * @return dF(x -> y) where x is consumed if it's a success
      */
     @Contract(pure = true)
     static <S, F> @NotNull ConsumableFunction<Result<S, F>>
@@ -50,11 +50,12 @@ public interface Transformers {
      * Returns a function which takes a Result with an Exception failure type and, if it's a success, applies
      * the mapping value to that success, returning a new success unless an exception is thrown, when it
      * returns a failure of that exception. If the input was a failure, it returns that failure.
-     * @param throwingFunction
+     * @param throwingFunction to try to map the success but may throw
      * @param <IS> input success
      * @param <OS> output success
      * @param <X> exception type
-     * @return
+     * @return dF(x -> y) where y maps the success through the throwing function
+     * unless it throws, in which case it will return a failure of that exception
      */
     static <IS, OS, X extends Exception> @NotNull Function<Result<IS, Exception>, Result<OS, Exception>>
     onSuccessTry(ThrowingLambdas.ThrowingFunction<IS, OS, X> throwingFunction) {
@@ -67,19 +68,19 @@ public interface Transformers {
      * to that success, returning a new success unless an exception is thrown, when it
      * returns a failure of the exception-mapper applied to the exception.
      * If the input was a failure, it returns that failure.
-     * @param throwingFunction
-     * @param exceptionMapper
+     * @param throwingFunction to map success but may throw
+     * @param exceptionMapper to handle mapping the throw to a failure
      * @param <IS> input success
      * @param <OS> output success
      * @param <F> fail type
      * @param <X> exception type
-     * @return
+     * @return dF(x -> y) where y uses the throwing function if
+     * x is a success AND if the throwing function throws instead
+     * uses the exception mapper to fail gracefully into a failure type
      */
     static <IS, OS, F, X extends Exception> @NotNull Function<Result<IS, F>, Result<OS, F>>
-    onSuccessTry(
-        ThrowingLambdas.ThrowingFunction<IS, OS, X> throwingFunction,
-        Function<Exception, F> exceptionMapper
-    ) {
+    onSuccessTry(ThrowingLambdas.ThrowingFunction<IS, OS, X> throwingFunction,
+                 Function<Exception, F> exceptionMapper) {
         return attempt(tryTo(throwingFunction).andThen(onFailure(exceptionMapper)));
     }
 
@@ -87,12 +88,12 @@ public interface Transformers {
      * Returns a function which takes a Result and, if it's a success, applies the provided function
      * to that success - generating a new Result - and returns that Result. Otherwise, returns the
      * original failure.
-     * @param mappingFunction
+     * @param mappingFunction to use on success
      * @param <IS> input success
      * @param <OS> output success
-     * @param <F> failure type
-     * @param <OF>
-     * @return
+     * @param <F> parent failure type
+     * @param <OF> child failure type
+     * @return dF(x -> y) where y uses the mapping function if x is a success
      */
     @Contract(pure = true)
     static <IS, OS, F, OF extends F> @NotNull Function<Result<IS, F>, Result<OS, F>>
@@ -105,11 +106,11 @@ public interface Transformers {
     /**
      * Returns a function which takes a Result and, if it's a failure, applies the provided function
      * to that failure. Otherwise, returns the original success.
-     * @param mappingFunction
+     * @param mappingFunction to map the failure against
      * @param <S> success type
      * @param <IF> input failure type
      * @param <OF> output failure type
-     * @return
+     * @return dF(x -> y) where y uses the mapping function if x is a failure
      */
     static <S, IF, OF> @NotNull Function<Result<S, IF>, Result<S, OF>>
     onFailure(@NotNull Function<IF, OF> mappingFunction) {
@@ -118,10 +119,10 @@ public interface Transformers {
 
     /**
      * Returns a consumer which takes a Result and, if it's a failure, passes it to the provided consumer
-     * @param consumer
+     * @param consumer to use on failure
      * @param <S> success type
      * @param <F> failure type
-     * @return
+     * @return dF(x -> y) where if x is a failure it passes it to the consumer
      */
     @Contract(pure = true)
     static <S, F> @NotNull ConsumableFunction<Result<S, F>>
@@ -137,7 +138,8 @@ public interface Transformers {
      * be flat-mapped over.
      * @param <S> success type
      * @param <F> fail type
-     * @return
+     * @return dF(x -> y) where y is either a stream of success results
+     * or a failure
      */
     @Contract(pure = true)
     static <S, F> @NotNull Function<Result<Stream<S>, F>, Stream<Result<S, F>>>
@@ -152,12 +154,13 @@ public interface Transformers {
      * Returns a function which takes a Result and, if it's a failure, applies the provided function to
      * that failure - generating a new Result - and returns that Result. Otherwise, return the original
      * success.
-     * @param recoveryFunction
+     * @param recoveryFunction function to generate recovery result if input is a failure
      * @param <S> success type
      * @param <IF> input fail type
      * @param <OF> output fail type
      * @param <OS> output success type
-     * @return
+     * @return dF(x -> y) where if x is a failure, returns
+     * the result of the recovery function
      */
     @Contract(pure = true)
     static <S, IF, OF, OS extends S> @NotNull Function<Result<S, IF>, Result<S, OF>>
@@ -171,7 +174,7 @@ public interface Transformers {
      * Returns a function which takes a Result, and converts failures to successes and vice versa.
      * @param <S> success type
      * @param <F> fail type
-     * @return
+     * @return dF(x -> y) where if x is R(S, F) then y is R(F, S)
      */
     @Contract(pure = true)
     static <S, F> @NotNull Function<Result<S, F>, Result<F, S>> invert() {
@@ -194,7 +197,8 @@ public interface Transformers {
      * failures of the outer Result or use the overload which maps the failures of the inner Result.
      * @param <S> success type
      * @param <F> fail type
-     * @return
+     * @return dF(x -> y) where x of the form R(R(S, FInner) FOuter)
+     * y is the result of merging x's failures into R(S, FMerged)
      */
     @Contract(pure = true)
     static <S, F> @NotNull Function<Result<Result<S, F>, F>, Result<S, F>>
@@ -216,11 +220,12 @@ public interface Transformers {
      * <p>
      * In these cases, it's more likely the inner failure type is domain-specific, so the default approach is to map the
      * outer failure to the inner failure and then merge.
-     * @param failureMapper
+     * @param failureMapper f(F2 -> F1) merges f2 into f1
      * @param <S> success type
      * @param <F1> left fail type
      * @param <F2> right fail type
-     * @return
+     * @return dF(x -> y) where R is a result function yielding F2
+     * y is a result where the failure is merged if necessary
      */
     @Contract(pure = true)
     static <S, F1, F2> @NotNull Function<Result<Result<S, F1>, F2>, Result<S, F1>>
