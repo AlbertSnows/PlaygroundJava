@@ -1,6 +1,8 @@
 package co.unruly.control.result;
 
 import co.unruly.control.pair.Pair;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,18 +24,21 @@ import static java.util.stream.Collectors.toList;
 record ResultCollector<L, R, T>(
         Function<Pair<List<L>, List<R>>, T> finisher) implements Collector<Result<L, R>, Pair<List<L>, List<R>>, T> {
 
+    @Contract(pure = true)
     @Override
-    public Supplier<Pair<List<L>, List<R>>> supplier() {
+    public @NotNull Supplier<Pair<List<L>, List<R>>> supplier() {
         return () -> new Pair<>(new ArrayList<>(), new ArrayList<>());
     }
 
+    @Contract(pure = true)
     @Override
-    public BiConsumer<Pair<List<L>, List<R>>, Result<L, R>> accumulator() {
+    public @NotNull BiConsumer<Pair<List<L>, List<R>>, Result<L, R>> accumulator() {
         return (accumulator, Result) -> Result.either(accumulator.left()::add, accumulator.right()::add);
     }
 
+    @Contract(pure = true)
     @Override
-    public BinaryOperator<Pair<List<L>, List<R>>> combiner() {
+    public @NotNull BinaryOperator<Pair<List<L>, List<R>>> combiner() {
         return (x, y) -> Pair.of(
                 Stream.of(x, y).flatMap(l -> l.left().stream()).collect(toList()),
                 Stream.of(x, y).flatMap(r -> r.right().stream()).collect(toList())
@@ -41,8 +46,9 @@ record ResultCollector<L, R, T>(
     }
 
 
+    @Contract(pure = true)
     @Override
-    public Set<Characteristics> characteristics() {
+    public @NotNull Set<Characteristics> characteristics() {
         return Collections.emptySet();
     }
 }

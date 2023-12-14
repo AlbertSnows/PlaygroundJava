@@ -75,8 +75,9 @@ public record Pair<L, R>(L left, R right) {
         return function.apply(this.left, this.right);
     }
 
+    @Contract(pure = true)
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "Pair{" +
                 "left=" + left +
                 ", right=" + right +
