@@ -12,6 +12,7 @@ import static co.unruly.control.result.Transformers.onSuccess;
  */
 public interface Equality {
 
+    @SuppressWarnings("unchecked")
     static <T> boolean areEqual(T self, Object other, BiPredicate<T, T> equalityChecker) {
         if(self==other) {
             return true;
