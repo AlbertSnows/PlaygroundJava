@@ -78,16 +78,39 @@ public interface Validators {
         return acceptIf(test, t -> error);
     }
 
+    /**
+     * @param test predicate function
+     * @param errorGenerator generates errors from T
+     * @param <T> input type
+     * @param <E> error type
+     * @return dF(x -> y) where if x fails test, it returns
+     * a stream of E from errorGenerator
+     */
     @Contract(pure = true)
-    static <T, E> @NotNull Validator<T, E> acceptIf(Predicate<T> test, Function<T, E> errorGenerator) {
+    static <T, E> @NotNull Validator<T, E>
+    acceptIf(Predicate<T> test, Function<T, E> errorGenerator) {
         return t -> test.test(t) ? Stream.empty() : Stream.of(errorGenerator.apply(t));
     }
 
+    /**
+     * @param validator validation function
+     * @param <T> input type
+     * @param <E> output type
+     * @return optional stream getting the first result of the stream validation
+     */
     @Contract(pure = true)
     static <T, E> @NotNull Validator<T, E> firstOf(Validator<T, E> validator) {
         return t -> Optionals.stream(validator.validate(t).findFirst());
     }
 
+    /**
+     * @param test predicate function
+     * @param validator validation function
+     * @param <T> input type
+     * @param <E> error type
+     * @return dF(x -> y) where x is tested and, if passed, is then validated
+     * otherwise it returns an empty stream
+     */
     @Contract(pure = true)
     static <T, E> @NotNull Validator<T, E> onlyIf(Predicate<T> test, Validator<T, E> validator) {
         return t -> test.test(t) ? validator.validate(t) : Stream.empty();
@@ -108,6 +131,14 @@ public interface Validators {
         return t -> validator.validate(t).map(e -> errorMapper.apply(t, e));
     }
 
+    /**
+     * @param accessor f(T -> T1)
+     * @param innerValidator validator for T1
+     * @param <T> input type
+     * @param <T1> output type
+     * @param <E> error type
+     * @return dF(x -> y) where x converted to T1 and validated
+     */
     @Contract(pure = true)
     static <T, T1, E> @NotNull Validator<T, E>
     on(Function<T, T1> accessor, Validator<T1, E> innerValidator) {
