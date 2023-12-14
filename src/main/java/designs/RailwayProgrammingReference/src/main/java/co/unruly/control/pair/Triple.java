@@ -5,9 +5,23 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
+/**
+ * @param first
+ * @param second
+ * @param third
+ * @param <A>
+ * @param <B>
+ * @param <C>
+ */
 @SuppressWarnings("unused")
 public record Triple<A, B, C>(A first, B second, C third) {
 
+    /**
+     * @param <A>
+     * @param <B>
+     * @param <C>
+     * @param <R>
+     */
     @FunctionalInterface
     public interface TriFunction<A, B, C, R> {
         /**
@@ -19,15 +33,35 @@ public record Triple<A, B, C>(A first, B second, C third) {
         R apply(A a, B b, C c);
     }
 
+    /**
+     * @param first .
+     * @param second .
+     * @param third .
+     * @param <A> .
+     * @param <B> .
+     * @param <C> .
+     * @return triple if inputs
+     */
     @Contract(value = "_, _, _ -> new", pure = true)
-    public static <A, B, C> @NotNull Triple<A, B, C> of(A first, B second, C third) {
+    public static <A, B, C> @NotNull Triple<A, B, C>
+    of(A first, B second, C third) {
         return new Triple<>(first, second, third);
     }
 
+    /**
+     * @param function triple function
+     * @param <T> output type
+     * @return T from collapsing triple function
+     */
     public <T> T then(@NotNull Function<Triple<A, B, C>, T> function) {
         return function.apply(this);
     }
 
+    /**
+     * @param function tri function
+     * @param <T> output type
+     * @return T from collapsing tri types
+     */
     public <T> T then(@NotNull TriFunction<A, B, C, T> function) {
         return function.apply(first, second, third);
     }
