@@ -14,11 +14,11 @@ import java.util.function.Function;
  * <p>
  * The interface for Result is minimal: many common sample operations are implemented
  * with static methods on Introducers, Transformers, and Resolvers.
- *
+ * <p>
  * These can be composed upon a Result by passing them as arguments to then().
  *
- * @param <S> The type of a success
- * @param <F> The type of a failure
+ * @param <S> The type of success
+ * @param <F> The type of failure
  */
 public abstract class Result<S, F> implements Serializable {
 
@@ -27,35 +27,55 @@ public abstract class Result<S, F> implements Serializable {
 
     /**
      * Creates a new Success
+     * @param value to wrap
+     * @param <S> success type
+     * @param <F> fail type
+     * @return success wrapper of S
      */
     @Contract("_ -> new")
     public static <S, F> @NotNull Result<S, F> success(S value) {
         return new Success<>(value);
     }
 
-    /**
-     * Creates a new Success, taking the failure type for contexts where it can't be inferred.
-     */
-    @Contract("_, _ -> new")
-    public static <S, F> @NotNull Result<S, F> success(S value, Class<F> failureType) {
-        return new Success<>(value);
-    }
+    // is this needed?
+//    /**
+//     * Creates a new Success, taking the failure type for contexts where it can't be inferred.
+//     * @param value to wrap
+//     * @param failureType class type
+//     * @param <S> success type
+//     * @param <F> failure type
+//     * @return S wrapped in success
+//     */
+//    @Contract("_, _ -> new")
+//    public static <S, F> @NotNull Result<S, F> success(S value, Class<F> failureType) {
+//        return new Success<>(value);
+//    }
 
     /**
      * Creates a new Failure
+     * @param error to wrap
+     * @param <S> success type
+     * @param <F> fail type
+     * @return F wrapped in failure
      */
     @Contract("_ -> new")
     public static <S, F> @NotNull Result<S, F> failure(F error) {
         return new Failure<>(error);
     }
 
-    /**
-     * Creates a new Failure, taking the success type for contexts where it can't be inferred.
-     */
-    @Contract("_, _ -> new")
-    public static <S, F> @NotNull Result<S, F> failure(F error, Class<S> successType) {
-        return new Failure<>(error);
-    }
+    // is this needed?
+//    /**
+//     * Creates a new Failure, taking the success type for contexts where it can't be inferred.
+//     * @param error to wrap
+//     * @param successType for context
+//     * @param <S> success type
+//     * @param <F> fail type
+//     * @return F wrapped in failure
+//     */
+//    @Contract("_, _ -> new")
+//    public static <S, F> @NotNull Result<S, F> failure(F error, Class<S> successType) {
+//        return new Failure<>(error);
+//    }
 
     /**
      * Takes two functions, the first of which is executed in the case that this
