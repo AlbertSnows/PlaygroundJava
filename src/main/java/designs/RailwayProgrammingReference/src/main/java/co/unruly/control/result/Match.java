@@ -1,5 +1,8 @@
 package co.unruly.control.result;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -10,7 +13,7 @@ import static co.unruly.control.result.Resolvers.ifFailed;
 /**
  * A small DSL for building compact dispatch tables: better than if-expressions, worse than
  * proper pattern matching. But hey, it's Java, what do you expect?
- *
+ * <p>
  * This models a match attempt as a sequence of operations on a Result, starting with a Failure
  * and continuously trying to use flatMapFailure to convert that Result into a Success.
  */
@@ -22,8 +25,9 @@ public class Match {
      * as there's no way to determine if the dispatch table is complete, a base case is
      * required.
      */
+    @Contract(pure = true)
     @SafeVarargs
-    public static <I, O> MatchAttempt<I, O> match(Function<I, Result<O, I>>... potentialMatchers) {
+    public static <I, O> @NotNull MatchAttempt<I, O> match(Function<I, Result<O, I>>... potentialMatchers) {
         return f -> attemptMatch(potentialMatchers).andThen(ifFailed(f));
     }
 
@@ -32,7 +36,9 @@ public class Match {
      * as there's no way to determine if the dispatch table is complete: if no match is found,
      * returns a Failure of the input value.
      */
-    public static <I, O> Function<I, Result<O, I>> attemptMatch(Function<I, Result<O, I>>... potentialMatchers) {
+    @SafeVarargs
+    public static <I, O> @NotNull Function<I, Result<O, I>>
+    attemptMatch(Function<I, Result<O, I>>... potentialMatchers) {
         return compose(Stream.of(potentialMatchers).map(Transformers::recover)).compose(Result::failure);
     }
 
@@ -42,8 +48,10 @@ public class Match {
      * as there's no way to determine if the dispatch table is complete, a base case is
      * required.
      */
+    @Contract(pure = true)
     @SafeVarargs
-    public static <I, O> BoundMatchAttempt<I, O> matchValue(I inputValue, Function<I, Result<O, I>>... potentialMatchers) {
+    public static <I, O> @NotNull BoundMatchAttempt<I, O>
+    matchValue(I inputValue, Function<I, Result<O, I>>... potentialMatchers) {
         return f -> pipe(inputValue)
                 .then(attemptMatch(potentialMatchers))
                 .then(ifFailed(f))
