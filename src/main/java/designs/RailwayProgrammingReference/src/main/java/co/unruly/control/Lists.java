@@ -21,10 +21,10 @@ public interface Lists {
      */
     static <S, F> Result<List<S>, List<F>> successesOrFailures(@NotNull List<Result<S, F>> results) {
         Pair<List<S>, List<F>> successesAndFailures = results.stream().collect(split());
-        if(successesAndFailures.right.isEmpty()) {
-            return Result.success(successesAndFailures.left);
+        if(successesAndFailures.right().isEmpty()) {
+            return Result.success(successesAndFailures.left());
         } else {
-            return Result.failure(successesAndFailures.right);
+            return Result.failure(successesAndFailures.right());
         }
     }
 }
