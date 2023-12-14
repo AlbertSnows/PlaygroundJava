@@ -18,6 +18,10 @@ public class PairListCollector<L, R, FL, FR> implements Collector<Pair<L, R>, Pa
     private final Function<List<L>, FL> leftFinisher;
     private final Function<List<R>, FR> rightFinisher;
 
+    /**
+     * @param leftFinisher .
+     * @param rightFinisher .
+     */
     public PairListCollector(Function<List<L>, FL> leftFinisher, Function<List<R>, FR> rightFinisher) {
         this.leftFinisher = leftFinisher;
         this.rightFinisher = rightFinisher;
