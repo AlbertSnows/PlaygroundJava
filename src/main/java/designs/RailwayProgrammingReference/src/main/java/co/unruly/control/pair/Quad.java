@@ -6,23 +6,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 
 /**
- * @param first
- * @param second
- * @param third
- * @param fourth
- * @param <A>
- * @param <B>
- * @param <C>
- * @param <D>
+ * @param first .
+ * @param second .
+ * @param third .
+ * @param fourth .
+ * @param <A> .
+ * @param <B> .
+ * @param <C> .
+ * @param <D> .
  */
 public record Quad<A, B, C, D>(A first, B second, C third, D fourth) {
 
     /**
-     * @param <A>
-     * @param <B>
-     * @param <C>
-     * @param <D>
-     * @param <T>
+     * @param <A> .
+     * @param <B> .
+     * @param <C> .
+     * @param <D> .
+     * @param <T> output type
      */
     @FunctionalInterface
     public interface QuadFunction<A, B, C, D, T> {
