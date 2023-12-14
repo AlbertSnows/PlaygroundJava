@@ -32,6 +32,12 @@ public interface ErrorThrowingLambdas {
          */
         O apply(I input) throws X;
 
+        /**
+         * @param nextFunction the next function to pass our input into
+         * @param <T> outcome type
+         * @return dF(x -> y) where x is given to next function,
+         * and either T is return or an exception is thrown
+         */
         default <T> ThrowingFunction<I, T, X> andThen(Function<O, T> nextFunction) {
             return x -> nextFunction.apply(apply(x));
         }
@@ -76,6 +82,10 @@ public interface ErrorThrowingLambdas {
      */
     @FunctionalInterface
     interface ThrowingConsumer<T, X extends Throwable> {
+        /**
+         * @param item the item to accept
+         * @throws X exception type
+         */
         void accept(T item) throws X;
 
         /**
@@ -105,11 +115,23 @@ public interface ErrorThrowingLambdas {
      */
     @FunctionalInterface
     interface ThrowingBiFunction<A, B, R, X extends Throwable> {
+        /**
+         * @param first left value
+         * @param second right value
+         * @return the result of working with first and second
+         * @throws X exception type
+         */
         R apply(A first, B second) throws X;
 
         /**
          * Converts the provided bifunction into a regular BiFunction, where any thrown exceptions
          * are wrapped in a RuntimeException
+         * @param f the bifunction that might throw
+         * @param <A> left type
+         * @param <B> right type
+         * @param <R> result type
+         * @param <X> exception type
+         * @return a bifunction that applies the two inputs to f, wraps the result in a try-catch
          */
         @Contract(pure = true)
         static <A, B, R, X extends Throwable> @NotNull BiFunction<A, B, R>
