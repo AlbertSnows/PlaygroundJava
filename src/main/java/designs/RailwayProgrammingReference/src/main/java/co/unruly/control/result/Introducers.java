@@ -20,16 +20,24 @@ import static java.util.function.Function.identity;
  */
 public interface Introducers {
 
+
     /**
      * Returns a Function which creates a new Success wrapping the provided value
+     * @param <S> success type
+     * @param <F> fail type
+     * @return success wrapper
      */
     @Contract(pure = true)
-    static <S, F> @NotNull Function<S, Result<S, F>> success() {
+    static <S, F> @NotNull Function<S, Result<S, F>>
+    success() {
         return Result::success;
     }
 
     /**
      * Returns a Function which creates a new Failure wrapping the provided value
+     * @param <S> success type
+     * @param <F> fail type
+     * @return failure wrapper
      */
     @Contract(pure = true)
     static <S, F> @NotNull Function<F, Result<S, F>> failure() {
@@ -39,9 +47,14 @@ public interface Introducers {
     /**
      * Returns a function which takes an Optional value, and returns a success of the
      * wrapped value if it was present, otherwise returns a failure using the provided Supplier
+     * @param onEmpty failure supplier
+     * @param <S> success type
+     * @param <F> failure type
+     * @return result type
      */
     @Contract(pure = true)
-    static <S, F> @NotNull Function<Optional<S>, Result<S, F>> fromOptional(Supplier<F> onEmpty) {
+    static <S, F> @NotNull Function<Optional<S>, Result<S, F>>
+    fromOptional(Supplier<F> onEmpty) {
         return maybe -> maybe.map(Result::<S, F>success).orElseGet(() -> Result.failure(onEmpty.get()));
     }
 
@@ -60,20 +73,33 @@ public interface Introducers {
     /**
      * Returns a function which takes a value and checks a predicate on it: if the predicate passes, then
      * return a success of that value, otherwise return a failure of the provided value
+     * @param test testing function
+     * @param failureValue fail value
+     * @param <S> success type
+     * @param <F> fail type
+     * @return result
      */
     @Contract(pure = true)
-    static <S, F> @NotNull Function<S, Result<S, F>> ifFalse(Predicate<S> test, F failureValue) {
+    static <S, F> @NotNull Function<S, Result<S, F>>
+    ifFalse(Predicate<S> test, F failureValue) {
         return val -> test.test(val) ? Result.success(val) : Result.failure(failureValue);
     }
 
     /**
      * Returns a function which takes a value, applies the given function to it, and returns a
      * success of the returned value, unless it's null, when we return the given failure value
+     * @param mapper mapping function
+     * @param failure failure type
+     * @param <Input> input type
+     * @param <Output> output type
+     * @param <F> failure type
+     * @return failure if null, success of output otherwise
      */
     @Contract(pure = true)
-    static <S, S1, F> @NotNull Function<S, Result<S1, F>> ifNull(Function<S, S1> mapper, F failure) {
+    static <Input, Output, F> @NotNull Function<Input, Result<Output, F>>
+    ifNull(Function<Input, Output> mapper, F failure) {
         return input -> {
-            final S1 output = mapper.apply(input);
+            final Output output = mapper.apply(input);
             return output == null ? Result.failure(failure) : Result.success(output);
         };
     }
@@ -82,11 +108,18 @@ public interface Introducers {
      * Returns a function which takes a value, applies the given function to it, and returns a
      * success of the returned value, unless it's null, when we return a failure of the given
      * function to the input value.
+     * @param mapper mapping function
+     * @param failureMapper mapping (to failure) funcntion
+     * @param <Input> input type
+     * @param <Output> mapped type
+     * @param <F> fail type
+     * @return returns result with either success w/ output or failure with input
      */
     @Contract(pure = true)
-    static <S, S1, F> @NotNull Function<S, Result<S1, F>> ifNull(Function<S, S1> mapper, Function<S, F> failureMapper) {
+    static <Input, Output, F> @NotNull Function<Input, Result<Output, F>>
+    ifNull(Function<Input, Output> mapper, Function<Input, F> failureMapper) {
         return input -> {
-            final S1 output = mapper.apply(input);
+            final Output output = mapper.apply(input);
             return output == null ? Result.failure(failureMapper.apply(input)) : Result.success(output);
         };
     }
