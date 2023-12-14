@@ -132,9 +132,17 @@ public interface Introducers {
      * Note that the success path returns a success of the original value, not the result of applying this
      * function. This can be used to build more complex predicates, or to check the return value of a
      * consumer-with-return-code.
+     * @param checker maps input type to value type
+     * @param value value to check against
+     * @param failure failure value
+     * @param <S> success type
+     * @param <F> failure type
+     * @param <V> value type
+     * @return dF(x->y) where x is S and returns a result of type R(S, F) based on comparing S to V
      */
     @Contract(pure = true)
-    static <S, F, V> @NotNull Function<S, Result<S, F>> ifYields(Function<S, V> checker, V value, F failure) {
+    static <S, F, V> @NotNull Function<S, Result<S, F>>
+    ifYields(Function<S, V> checker, V value, F failure) {
         return input -> checker.apply(input) == value ? Result.failure(failure) : Result.success(input);
     }
 
@@ -146,6 +154,13 @@ public interface Introducers {
      * Note that the success path returns a success of the original value, not the result of applying this
      * function. This can be used to build more complex predicates, or to check the return value of a
      * consumer-with-return-code.
+     * @param checker maps S to V
+     * @param value type to compare against
+     * @param failureMapper maps success to failure outcome
+     * @param <S> success type
+     * @param <F> fail type
+     * @param <V> value comparison type
+     * @return dF(x -> y) where
      */
     @Contract(pure = true)
     static <S, F, V> @NotNull Function<S, Result<S, F>>
@@ -172,12 +187,18 @@ public interface Introducers {
      * <p>
      * Note that idiomatic handling of Exceptions as failure type does allow specialised catch blocks
      * on specific exception types.
+     * @param throwingFunction function that may fail
+     * @param exceptionMapper maps the exception to the failure type
+     * @param <IS> input type
+     * @param <OS> output type
+     * @param <X> exception type
+     * @param <F> failure type
+     * @return df(x->y) where x is the input type and the output is a result of type R(OS, F)
      */
     @Contract(pure = true)
-    static <IS, OS, X extends Exception, F> @NotNull Function<IS, Result<OS, F>> tryTo(
-        ThrowingLambdas.ThrowingFunction<IS, OS, X> throwingFunction,
-        Function<Exception, F> exceptionMapper
-    ) {
+    static <IS, OS, X extends Exception, F> @NotNull Function<IS, Result<OS, F>>
+    tryTo(ThrowingLambdas.ThrowingFunction<IS, OS, X> throwingFunction,
+          Function<Exception, F> exceptionMapper) {
         return input -> {
             try {
                 return Result.success(throwingFunction.apply(input));
@@ -203,10 +224,14 @@ public interface Introducers {
      * <p>
      * Note that idiomatic handling of Exceptions as failure type does allow specialised catch blocks
      * on specific exception types.
+     * @param throwingFunction function that throws type X
+     * @param <IS> input type
+     * @param <OS> output type
+     * @param <X> exception type
+     * @return a function that takes an input, passes it to the throwing function, and puts the outcome in a result
      */
-    static <IS, OS, X extends Exception> @NotNull Function<IS, Result<OS, Exception>> tryTo(
-        ThrowingLambdas.ThrowingFunction<IS, OS, X> throwingFunction
-    ) {
+    static <IS, OS, X extends Exception> @NotNull Function<IS, Result<OS, Exception>>
+    tryTo(ThrowingLambdas.ThrowingFunction<IS, OS, X> throwingFunction) {
         return tryTo(throwingFunction, identity());
     }
 
@@ -226,12 +251,17 @@ public interface Introducers {
      * <p>
      * Note that idiomatic handling of Exceptions as failure type does allow specialised catch blocks
      * on specific exception types.
+     * @param throwingFunction function that takes an input type IS, returns an output type OS, or throws X
+     * @param failureCase function mapping exception to failure?
+     * @param <IS> input type
+     * @param <OS> output type
+     * @param <X> exception type
+     * @param <F> failure value
+     * @return dF(x -> y) where x is of type IS and y is a result of type R(OS, F)
      */
     @Contract(pure = true)
-    static <IS, OS, X extends Exception, F> @NotNull Function<IS, Result<OS, F>> tryTo(
-        ThrowingLambdas.ThrowingFunction<IS, OS, X> throwingFunction,
-        F failureCase
-    ) {
+    static <IS, OS, X extends Exception, F> @NotNull Function<IS, Result<OS, F>>
+    tryTo(ThrowingLambdas.ThrowingFunction<IS, OS, X> throwingFunction, F failureCase) {
         return tryTo(throwingFunction, __ -> failureCase);
     }
 
@@ -240,8 +270,15 @@ public interface Introducers {
      * Returns a function which takes a value, applies the provided stream-returning function to it,
      * and return a stream which is the stream returned by the function, with each element wrapped in
      * a success, or a single failure of the exception thrown by that function if it threw an exception.
+     * @param f function that may throw an exception
+     * @param <IS> input type
+     * @param <OS> output type
+     * @param <X> exception type
+     * @return dF(x -> y) where x is provided to f and returns a stream of success results or a single failure result
+     * of the exception type X if f failed
      */
-    static <IS, OS, X extends Exception> @NotNull Function<IS, Stream<Result<OS, Exception>>> tryAndUnwrap(ThrowingLambdas.ThrowingFunction<IS, Stream<OS>, X> f) {
+    static <IS, OS, X extends Exception> @NotNull Function<IS, Stream<Result<OS, Exception>>>
+    tryAndUnwrap(ThrowingLambdas.ThrowingFunction<IS, Stream<OS>, X> f) {
         return tryTo(f).andThen(unwrapSuccesses());
     }
 
@@ -252,10 +289,15 @@ public interface Introducers {
      * <p>
      * This differs from exactCastTo in that exactCastTo will only return a Success if the given value is exactly
      * the target type, whereas this will also return a Success if it is a subtype of that type.
+     * @param targetClass class to cast to
+     * @param <IS> input type
+     * @param <OS> output type
+     * @return result with either cast type or failure
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    static <IS, OS extends IS> @NotNull Function<IS, Result<OS, IS>> castTo(Class<OS> targetClass) {
+    static <IS, OS extends IS> @NotNull Function<IS, Result<OS, IS>>
+    castTo(Class<OS> targetClass) {
         return input -> targetClass.isAssignableFrom(input.getClass())
             ? Result.success((OS)input)
             : Result.failure(input);
@@ -268,10 +310,15 @@ public interface Introducers {
      * <p>
      * This differs from castTo in that castTo will return a Success if the given value is a subtype of the target
      * type, whereas this will only return a Success if it is exactly that type.
+     * @param targetClass class to cast to
+     * @param <IS> input type
+     * @param <OS> success output type
+     * @return result with either cast type or fail tye
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    static <IS, OS extends IS> @NotNull Function<IS, Result<OS, IS>> exactCastTo(Class<OS> targetClass) {
+    static <IS, OS extends IS> @NotNull Function<IS, Result<OS, IS>>
+    exactCastTo(Class<OS> targetClass) {
         return input -> targetClass.equals(input.getClass())
             ? Result.success((OS)input)
             : Result.failure(input);
@@ -282,9 +329,16 @@ public interface Introducers {
      * Takes a java.util.Map and a failure function, and returns a function which takes a key and returns
      * a success of the associated value in the Map, if present, or applies the failure function to the
      * key otherwise.
+     * @param map map with K -> S relationship
+     * @param failureProvider function to call with K in fail case
+     * @param <K> key
+     * @param <S> success type
+     * @param <F> failure type
+     * @return result based on whether K is in map
      */
     @Contract(pure = true)
-    static <K, S, F> @NotNull Function<K, Result<S, F>> fromMap(Map<K, S> map, Function<K, F> failureProvider) {
+    static <K, S, F> @NotNull Function<K, Result<S, F>>
+    fromMap(Map<K, S> map, Function<K, F> failureProvider) {
         return key -> {
             if(map.containsKey(key)) {
                 return Result.success(map.get(key));
