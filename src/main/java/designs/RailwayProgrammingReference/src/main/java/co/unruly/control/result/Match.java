@@ -73,8 +73,8 @@ public class Match {
     }
 
     /**
-     * @param <I>
-     * @param <O>
+     * @param <I> input
+     * @param <O> output
      */
     @FunctionalInterface
     public interface MatchAttempt<I, O> {
@@ -86,8 +86,8 @@ public class Match {
     }
 
     /**
-     * @param <I>
-     * @param <O>
+     * @param <I> input
+     * @param <O> output
      */
     @FunctionalInterface
     public interface BoundMatchAttempt<I, O> {
