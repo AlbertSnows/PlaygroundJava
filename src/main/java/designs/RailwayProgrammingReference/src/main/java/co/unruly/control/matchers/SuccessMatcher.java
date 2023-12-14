@@ -6,11 +6,18 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @param <S> success
+ * @param <F> failure
+ */
 @SuppressWarnings("unused")
 public class SuccessMatcher<S, F> extends TypeSafeDiagnosingMatcher<Result<S, F>> {
 
     private final Matcher<S> innerMatcher;
 
+    /**
+     * @param innerMatcher .
+     */
     public SuccessMatcher(Matcher<S> innerMatcher) {
         this.innerMatcher = innerMatcher;
     }
