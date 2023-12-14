@@ -17,6 +17,7 @@ import static co.unruly.control.result.Transformers.onSuccess;
  * Comprehensions seem to be a set of abstract functions that
  * define ways to apply various kinds of function to tuples
  */
+@SuppressWarnings({"optional", "OptionalUsedAsFieldOrParameterType"})
 public interface Comprehensions {
 
     @Contract(pure = true)
