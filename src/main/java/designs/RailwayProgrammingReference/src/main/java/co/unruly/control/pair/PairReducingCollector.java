@@ -44,8 +44,8 @@ public class PairReducingCollector<L, R> implements Collector<Pair<L, R>, PairRe
     @Override
     public BiConsumer<MutablePair<L, R>, Pair<L, R>> accumulator() {
         return (acc, item) -> {
-            acc.left = leftReducer.apply(acc.left, item.left);
-            acc.right = rightReducer.apply(acc.right, item.right);
+            acc.left = leftReducer.apply(acc.left, item.left());
+            acc.right = rightReducer.apply(acc.right, item.right());
         };
     }
 

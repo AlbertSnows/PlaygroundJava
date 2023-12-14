@@ -54,8 +54,8 @@ public class PairTest {
         Pair<Integer[], String[]> parallelArrays = Stream.of(Pair.of(2, "hello"), Pair.of(4, "goodbye"))
                 .collect(toArrays(Integer[]::new, String[]::new));
 
-        assertThat(asList(parallelArrays.left), is(asList(2, 4)));
-        assertThat(asList(parallelArrays.right), is(asList("hello", "goodbye")));
+        assertThat(asList(parallelArrays.left()), is(asList(2, 4)));
+        assertThat(asList(parallelArrays.right()), is(asList("hello", "goodbye")));
     }
 
     @Test

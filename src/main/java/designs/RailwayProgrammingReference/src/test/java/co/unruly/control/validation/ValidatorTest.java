@@ -266,12 +266,12 @@ public class ValidatorTest {
                 .map(isPrime)
                 .collect(split());
 
-        assertTrue(hasItems(5, 7).matches(results.left));
+        assertTrue(hasItems(5, 7).matches(results.left()));
         assertTrue(hasItems(
                 validationFailure(4, "4 divides by 2"),
                 validationFailure(6, "6 divides by 2", "6 divides by 3"),
                 validationFailure(8, "8 divides by 2")
-                ).matches(results.right));
+                ).matches(results.right()));
     }
 
     @Test

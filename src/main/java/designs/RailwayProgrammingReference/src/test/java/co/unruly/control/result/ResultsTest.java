@@ -232,8 +232,9 @@ public class ResultsTest {
                 .map(attempt(x -> x % 2 == 0 ? success(x / 2) : failure(x + " is odd")))
                 .collect(split());
 
-        assertTrue(hasItems(3L).matches(halvedNumbers.left));
-        assertTrue(hasItems("java.lang.NumberFormatException: For input string: \"NaN\"", "5 is odd").matches(halvedNumbers.right));
+        assertTrue(hasItems(3L).matches(halvedNumbers.left()));
+        assertTrue(hasItems("java.lang.NumberFormatException: For input string: \"NaN\"", "5 is odd")
+                .matches(halvedNumbers.right()));
     }
 
     @Test

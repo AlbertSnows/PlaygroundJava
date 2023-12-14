@@ -35,14 +35,14 @@ class ResultCollector<L, R, T> implements Collector<Result<L, R>, Pair<List<L>, 
 
     @Override
     public BiConsumer<Pair<List<L>, List<R>>, Result<L, R>> accumulator() {
-        return (accumulator, Result) -> Result.either(accumulator.left::add, accumulator.right::add);
+        return (accumulator, Result) -> Result.either(accumulator.left()::add, accumulator.right()::add);
     }
 
     @Override
     public BinaryOperator<Pair<List<L>, List<R>>> combiner() {
         return (x, y) -> Pair.of(
-                Stream.of(x, y).flatMap(l -> l.left.stream()).collect(toList()),
-                Stream.of(x, y).flatMap(r -> r.right.stream()).collect(toList())
+                Stream.of(x, y).flatMap(l -> l.left().stream()).collect(toList()),
+                Stream.of(x, y).flatMap(r -> r.right().stream()).collect(toList())
         );
     }
 
