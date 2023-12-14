@@ -3,42 +3,25 @@ package co.unruly.control.pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
-public class Triple<A, B, C> {
+public record Triple<A, B, C>(A first, B second, C third) {
 
     @FunctionalInterface
     public interface TriFunction<A, B, C, R> {
+        /**
+         * @param a .
+         * @param b .
+         * @param c .
+         * @return R
+         */
         R apply(A a, B b, C c);
-    }
-
-    public final A first;
-    public final B second;
-    public final C third;
-
-    public Triple(A first, B second, C third) {
-        this.first = first;
-        this.second = second;
-        this.third = third;
     }
 
     @Contract(value = "_, _, _ -> new", pure = true)
     public static <A, B, C> @NotNull Triple<A, B, C> of(A first, B second, C third) {
         return new Triple<>(first, second, third);
-    }
-
-    public A first() {
-        return first;
-    }
-
-    public B second() {
-        return second;
-    }
-
-    public C third() {
-        return third;
     }
 
     public <T> T then(@NotNull Function<Triple<A, B, C>, T> function) {
@@ -47,21 +30,6 @@ public class Triple<A, B, C> {
 
     public <T> T then(@NotNull TriFunction<A, B, C, T> function) {
         return function.apply(first, second, third);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Triple<?, ?, ?> triple = (Triple<?, ?, ?>) o;
-        return Objects.equals(first, triple.first) &&
-                Objects.equals(second, triple.second) &&
-                Objects.equals(third, triple.third);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(first, second, third);
     }
 
     @Override
