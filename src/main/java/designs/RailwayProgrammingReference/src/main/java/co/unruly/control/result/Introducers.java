@@ -14,10 +14,10 @@ import java.util.stream.Stream;
 import static co.unruly.control.result.Transformers.unwrapSuccesses;
 import static java.util.function.Function.identity;
 
-@SuppressWarnings("unused")
-/*
-  A collection of sample functions which take regular values and output a Result.
+/**
+ *   A collection of sample functions which take regular values and output a Result.
  */
+@SuppressWarnings("unused")
 public interface Introducers {
 
 
@@ -61,9 +61,11 @@ public interface Introducers {
     /**
      * Returns a function which takes a value and checks a predicate on it: if the predicate passes, then
      * return a success of that value, otherwise apply the failure mapper to it
+     * @param test a predicate testing function
      * @param <F> fail
      * @param <S> success
      * @param failureMapper func to map to
+     * @return dF(x -> y) where x is S and y is a result type determined by testing x against test
      */
     @Contract(pure = true)
     static <S, F> @NotNull Function<S, Result<S, F>> ifFalse(Predicate<S> test, Function<S, F> failureMapper) {
