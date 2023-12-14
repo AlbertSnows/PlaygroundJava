@@ -1,8 +1,12 @@
 package co.unruly.control.pair;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 import java.util.function.Function;
 
+@SuppressWarnings("unused")
 public class Triple<A, B, C> {
 
     @FunctionalInterface
@@ -20,7 +24,8 @@ public class Triple<A, B, C> {
         this.third = third;
     }
 
-    public static <A, B, C> Triple<A, B, C> of(A first, B second, C third) {
+    @Contract(value = "_, _, _ -> new", pure = true)
+    public static <A, B, C> @NotNull Triple<A, B, C> of(A first, B second, C third) {
         return new Triple<>(first, second, third);
     }
 
@@ -36,11 +41,11 @@ public class Triple<A, B, C> {
         return third;
     }
 
-    public <T> T then(Function<Triple<A, B, C>, T> function) {
+    public <T> T then(@NotNull Function<Triple<A, B, C>, T> function) {
         return function.apply(this);
     }
 
-    public <T> T then(TriFunction<A, B, C, T> function) {
+    public <T> T then(@NotNull TriFunction<A, B, C, T> function) {
         return function.apply(first, second, third);
     }
 

@@ -4,7 +4,9 @@ import co.unruly.control.result.Result;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
+import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public class SuccessMatcher<S, F> extends TypeSafeDiagnosingMatcher<Result<S, F>> {
 
     private final Matcher<S> innerMatcher;
@@ -14,7 +16,7 @@ public class SuccessMatcher<S, F> extends TypeSafeDiagnosingMatcher<Result<S, F>
     }
 
     @Override
-    protected boolean matchesSafely(Result<S, F> result, Description description) {
+    protected boolean matchesSafely(@NotNull Result<S, F> result, Description description) {
         Boolean matches = result.either(
             innerMatcher::matches,
             failure -> false
@@ -28,12 +30,12 @@ public class SuccessMatcher<S, F> extends TypeSafeDiagnosingMatcher<Result<S, F>
     }
 
     @Override
-    public void describeTo(Description description) {
+    public void describeTo(@NotNull Description description) {
         description.appendText("A Success containing ");
         innerMatcher.describeTo(description);
     }
 
-    private void describe(Result<S, F> result, Description description) {
+    private void describe(@NotNull Result<S, F> result, Description description) {
         result.either(
             success -> description.appendText("A Success containing " + success),
             failure -> description.appendText("A Failure containing " + failure)
