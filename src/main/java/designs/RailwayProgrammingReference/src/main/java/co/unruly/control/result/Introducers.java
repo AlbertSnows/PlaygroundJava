@@ -195,7 +195,9 @@ public interface Introducers {
      * @param <OS> output type
      * @param <X> exception type
      * @param <F> failure type
-     * @return df(x->y) where x is the input type and the output is a result of type R(OS, F)
+     * @return df(IS -> R(OS, F)) where x is the input type passed to throwingFunction
+     * and the output wrapped in a try-catch that returns the exception mapped to a failure
+     * via the exceptionMapper
      */
     @Contract(pure = true)
     static <IS, OS, X extends Exception, F> @NotNull Function<IS, Result<OS, F>>
@@ -230,7 +232,9 @@ public interface Introducers {
      * @param <IS> input type
      * @param <OS> output type
      * @param <X> exception type
-     * @return a function that takes an input, passes it to the throwing function, and puts the outcome in a result
+     * @return dF(IS -> R(OS, Exception))
+     * input is passed to the throwing function,
+     * output is a result with either the OS or F(Exception)
      */
     static <IS, OS, X extends Exception> @NotNull Function<IS, Result<OS, Exception>>
     tryTo(ThrowingLambdas.ThrowingFunction<IS, OS, X> throwingFunction) {

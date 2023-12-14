@@ -26,7 +26,7 @@ public interface Transformers {
      * @param <IS> input success
      * @param <OS> output success
      * @param <F> failure type
-     * @return dF(x -> y) where y uses the mapping function if x is a success
+     * @return dF(R(IS, F) -> R(OS, F)) IS -> mappingFunction -> OS
      */
     static <IS, OS, F> @NotNull Function<Result<IS, F>, Result<OS, F>>
     onSuccess(@NotNull Function<IS, OS> mappingFunction) {
@@ -38,7 +38,8 @@ public interface Transformers {
      * @param consumer to use on success
      * @param <S> success
      * @param <F> failure type
-     * @return dF(x -> y) where x is consumed if it's a success
+     * @return dF(x -> x) where x is consumed by the
+     * consumer to produce a side effect if it's a success
      */
     @Contract(pure = true)
     static <S, F> @NotNull ConsumableFunction<Result<S, F>>
@@ -54,8 +55,13 @@ public interface Transformers {
      * @param <IS> input success
      * @param <OS> output success
      * @param <X> exception type
-     * @return dF(x -> y) where y maps the success through the throwing function
-     * unless it throws, in which case it will return a failure of that exception
+     * @return dF(R(IS, Exception) -> R(OS, Exception))
+     * <p>
+     * if input success -> R(IS -> OS)
+     * <p>
+     * if input failure -> R(Exception)
+     * <p>
+     * if throwingFunction failure -> R(X)
      */
     static <IS, OS, X extends Exception> @NotNull Function<Result<IS, Exception>, Result<OS, Exception>>
     onSuccessTry(ThrowingLambdas.ThrowingFunction<IS, OS, X> throwingFunction) {
@@ -163,8 +169,9 @@ public interface Transformers {
      * @param <IF> input fail type
      * @param <OF> output fail type
      * @param <OS> output success type
-     * @return dF(x -> y) where if x is a failure, returns
-     * the result of the recovery function
+     * @return dF(R(S, IF) -> R(S/OS, OF)) where
+     * R = success -> R(S)
+     * R = failure -> recoveryFunction(IF) -> R(OS, OF)
      */
     @Contract(pure = true)
     static <S, IF, OF, OS extends S> @NotNull Function<Result<S, IF>, Result<S, OF>>

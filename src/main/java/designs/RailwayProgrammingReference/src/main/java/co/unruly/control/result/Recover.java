@@ -34,16 +34,19 @@ public interface Recover {
      * provided class, applies the mapping function to it and returns it as a Success, otherwise returning
      * the input value as a Failure.
      * @param targetClass to map to
-     * @param mapper maps from TF to S
+     * @param mapper maps from NarrowFailType to S
      * @param <S> success type
-     * @param <F> broad fail type
-     * @param <TF> narrow fail type
-     * @return dF(x -> y) where if type of x is TF returns success of mapper(x)
-     * or failure otherwise
+     * @param <BroadFailType> broad fail type
+     * @param <NarrowFailType> narrow fail type
+     * @return dF(BroadFailType -> R(S, BroadFailType)) where
+     * NarrowFailType !extends BroadFailType -> R(BroadFailType)
+     * NarrowFailType extends BroadFailType -> mapper(BroadFailType as NarrowFailType) -> R(S)
      */
-    static <S, F, TF extends F> @NotNull Function<F, Result<S, F>>
-    ifType(Class<TF> targetClass, Function<TF, S> mapper) {
-        return Introducers.<F, TF>castTo(targetClass).andThen(Transformers.onSuccess(mapper));
+    static <S, BroadFailType, NarrowFailType extends BroadFailType> @NotNull
+            Function<BroadFailType, Result<S, BroadFailType>>
+    ifType(Class<NarrowFailType> targetClass, Function<NarrowFailType, S> mapper) {
+        return Introducers.<BroadFailType, NarrowFailType>castTo(targetClass)
+                .andThen(Transformers.onSuccess(mapper));
     }
 
     /**

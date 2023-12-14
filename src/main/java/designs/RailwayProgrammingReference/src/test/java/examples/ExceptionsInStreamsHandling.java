@@ -14,7 +14,6 @@ import static co.unruly.control.result.Transformers.*;
 @SuppressWarnings({"unused", "NewClassNamingConvention"})
 public class ExceptionsInStreamsHandling {
 
-
     @Test
     public void handling_exceptions_with_result_example() {
         List<Integer> customerAges = Stream.of("Bob", "Bill")
