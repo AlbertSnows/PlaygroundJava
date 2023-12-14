@@ -20,7 +20,16 @@ public class PairReducingCollector<L, R> implements Collector<Pair<L, R>, PairRe
     private final BinaryOperator<L> leftReducer;
     private final BinaryOperator<R> rightReducer;
 
-    public PairReducingCollector(L leftIdentity, R rightIdentity, BinaryOperator<L> leftReducer, BinaryOperator<R> rightReducer) {
+    /**
+     * @param leftIdentity .
+     * @param rightIdentity .
+     * @param leftReducer .
+     * @param rightReducer .
+     */
+    public PairReducingCollector(
+            L leftIdentity, R rightIdentity,
+            BinaryOperator<L> leftReducer,
+            BinaryOperator<R> rightReducer) {
         this.leftIdentity = leftIdentity;
         this.rightIdentity = rightIdentity;
         this.leftReducer = leftReducer;
@@ -59,7 +68,11 @@ public class PairReducingCollector<L, R> implements Collector<Pair<L, R>, PairRe
         return EnumSet.noneOf(Characteristics.class);
     }
 
-    static class MutablePair<L, R> {
+    /**
+     * @param <L> left type
+     * @param <R> right type
+     */
+    public static class MutablePair<L, R> {
         L left;
         R right;
 
