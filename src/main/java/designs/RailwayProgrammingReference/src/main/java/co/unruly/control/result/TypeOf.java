@@ -26,17 +26,29 @@ public interface TypeOf {
 
     /**
      * Generalises the success type for a Result to an appropriate superclass.
+     * @param dummy class for overload differentiation
+     * @param <T> success parent type
+     * @param <F> failure type
+     * @param <S> success child type
+     * @return function that upcasts S to T
      */
     @Contract(pure = true)
-    static <T, F, S extends T> @NotNull Function<Result<S, F>, Result<T, F>> using(ForSuccesses<T> dummy) {
+    static <T, F, S extends T> @NotNull Function<Result<S, F>, Result<T, F>>
+    using(ForSuccesses<T> dummy) {
         return result -> result.then(onSuccess(HigherOrderFunctions::upcast));
     }
 
     /**
      * Generalises the failure type for a Result to an appropriate superclass.
+     * @param dummy class for overload differentiation
+     * @param <S> success type
+     * @param <T> failure parent type
+     * @param <F> failure child type
+     * @return result with failure upcasted
      */
     @Contract(pure = true)
-    static <S, T, F extends T> @NotNull Function<Result<S, F>, Result<S, T>> using(ForFailures<T> dummy) {
+    static <S, T, F extends T> @NotNull Function<Result<S, F>, Result<S, T>>
+    using(ForFailures<T> dummy) {
         return result -> result.then(Transformers.onFailure(HigherOrderFunctions::upcast));
     }
 
