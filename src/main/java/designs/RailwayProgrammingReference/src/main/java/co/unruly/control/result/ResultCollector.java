@@ -13,20 +13,14 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
 
 /**
  * Collects a Stream of Results into a Pair, with the left being a list of success values
  * and the right being a list of failure values.
  */
-class ResultCollector<L, R, T> implements Collector<Result<L, R>, Pair<List<L>, List<R>>, T> {
-
-    private final Function<Pair<List<L>, List<R>>, T> finisher;
-
-    ResultCollector(Function<Pair<List<L>, List<R>>, T> finisher) {
-        this.finisher = finisher;
-    }
+record ResultCollector<L, R, T>(
+        Function<Pair<List<L>, List<R>>, T> finisher) implements Collector<Result<L, R>, Pair<List<L>, List<R>>, T> {
 
     @Override
     public Supplier<Pair<List<L>, List<R>>> supplier() {
@@ -44,11 +38,6 @@ class ResultCollector<L, R, T> implements Collector<Result<L, R>, Pair<List<L>, 
                 Stream.of(x, y).flatMap(l -> l.left().stream()).collect(toList()),
                 Stream.of(x, y).flatMap(r -> r.right().stream()).collect(toList())
         );
-    }
-
-    @Override
-    public Function<Pair<List<L>, List<R>>, T> finisher() {
-        return finisher;
     }
 
 
