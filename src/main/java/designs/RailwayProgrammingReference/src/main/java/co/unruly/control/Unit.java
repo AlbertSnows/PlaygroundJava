@@ -12,12 +12,16 @@ import java.util.function.Function;
  * This exists to offer a bridge between void and regular functions, providing
  * convenience methods to convert between them.
  */
+@SuppressWarnings("unused")
 public enum Unit {
 
     UNIT;
 
     /**
-     * Converts a Consumer to a Function, which returns Unit.UNIT
+     * Converts a Consumer to a Function, which returns Unit. UNIT
+     * @param toVoid function to use as consumer
+     * @param <T> input type
+     * @return UNIT
      */
     @Contract(pure = true)
     public static <T> @NotNull Function<T, Unit> functify(Consumer<T> toVoid) {
@@ -29,6 +33,9 @@ public enum Unit {
 
     /**
      * Converts a Function to a Consumer, throwing away the return value
+     * @param function to convert
+     * @param <T> input type
+     * @return consumer that throws away the return
      */
     @Contract(pure = true)
     public static <T> @NotNull Consumer<T> voidify(@NotNull Function<T, ?> function) {
@@ -36,7 +43,10 @@ public enum Unit {
     }
 
     /**
-     * A no-op function which takes any argument, does nothing, and returns Unit.UNIT
+     * A no-op function which takes any argument, does nothing, and returns Unit. UNIT
+     * @param __ nothin
+     * @param <T> type
+     * @return UNIT
      */
     public static <T> Unit noOp(T __) {
         return UNIT;
@@ -44,6 +54,8 @@ public enum Unit {
 
     /**
      * A no-op consumer which takes any argument and does nothing
+     * @param __ nothin
+     * @param <T> type
      */
     public static <T> void noOpConsumer(T __) {
         // do nothing
