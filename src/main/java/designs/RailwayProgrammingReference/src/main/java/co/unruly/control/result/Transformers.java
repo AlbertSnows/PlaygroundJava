@@ -16,6 +16,7 @@ import static co.unruly.control.result.Introducers.tryTo;
 /**
  * A collection of functions which take a Result and return a Result.
  */
+@SuppressWarnings("unused")
 public interface Transformers {
 
     /**
@@ -69,7 +70,9 @@ public interface Transformers {
     @Contract(pure = true)
     static <IS, OS, F, OF extends F> @NotNull Function<Result<IS, F>, Result<OS, F>>
     attempt(Function<IS, Result<OS, OF>> mappingFunction) {
-        return r -> r.either(mappingFunction.andThen(onFailure((Function<OF, F>) (fv) -> HigherOrderFunctions.upcast(fv))), Result::failure);
+        return r -> r.either(
+                mappingFunction.andThen(onFailure((Function<OF, F>) HigherOrderFunctions::upcast)),
+                Result::failure);
     }
 
     /**
@@ -92,7 +95,7 @@ public interface Transformers {
     /**
      * Takes a Result of a Stream as a success or a single failure, and returns a Stream of Results
      * containing all the successes, or the single failure.
-     *
+     * <p>
      * The main use-case for this is to follow mapping over tryTo() on a function which was designed to
      * be flat-mapped over.
      */
@@ -110,8 +113,11 @@ public interface Transformers {
      * success.
      */
     @Contract(pure = true)
-    static <S, IF, OF, OS extends S> @NotNull Function<Result<S, IF>, Result<S, OF>> recover(Function<IF, Result<OS, OF>> recoveryFunction) {
-        return r -> r.either(Result::success, recoveryFunction.andThen(onSuccess((Function<OS, S>) (fv) -> HigherOrderFunctions.upcast(fv))));
+    static <S, IF, OF, OS extends S> @NotNull Function<Result<S, IF>, Result<S, OF>>
+    recover(Function<IF, Result<OS, OF>> recoveryFunction) {
+        return r -> r.either(
+                Result::success,
+                recoveryFunction.andThen(onSuccess((Function<OS, S>) HigherOrderFunctions::upcast)));
     }
 
     /**
@@ -123,17 +129,17 @@ public interface Transformers {
     }
 
     /**
-     * Returns a function which takes a Result whose success type is itself a Result, and merges the failure cases
+     * Returns a function which takes a Result whose success type is itself a Result, and merges the failure cases,
      * so we have a flat Result.
-     *
+     * <p>
      * Note that *most of the time* this shouldn't be required, and indicates using onSuccess() when attempt() would
      * be more appropriate.
-     *
+     * <p>
      * There are some situations though where we do end up with constructs like this: one example
      * is when a function which returns a Result can throw exceptions (eg, when a Result-returning handler is passed
      * into a database context). Passing that call into a tryTo() will yield a success type of the inner Result, wrapped
      * in an outer Result for the tryTo().
-     *
+     * <p>
      * If the failure types of the inner and outer failure types do not match, you'll need to either first convert the
      * failures of the outer Result or use the overload which maps the failures of the inner Result.
      */
@@ -145,15 +151,15 @@ public interface Transformers {
     /**
      * Returns a function which takes a Result whose success type is itself a Result, and merges the failure cases
      * so we have a flat Result.
-     *
+     * <p>
      * Note that *most of the time* this shouldn't be required, and indicates using onSuccess() when attempt() would
      * be more appropriate.
-     *
+     * <p>
      * There are some situations though where we do end up with constructs like this: one example
      * is when a function which returns a Result can throw exceptions (eg, when a Result-returning handler is passed
      * into a database context). Passing that call into a tryTo() will yield a success type of the inner Result, wrapped
      * in an outer Result for the tryTo().
-     *
+     * <p>
      * In these cases, it's more likely the inner failure type is domain-specific, so the default approach is to map the
      * outer failure to the inner failure and then merge.
      */
