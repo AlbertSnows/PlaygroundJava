@@ -15,6 +15,9 @@ import java.util.function.Function;
 @SuppressWarnings("unused")
 public enum Unit {
 
+    /**
+     * enum value
+     */
     UNIT;
 
     /**
