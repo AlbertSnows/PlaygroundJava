@@ -47,7 +47,8 @@ public abstract class Result<S, F> implements Serializable {
      * @return S wrapped in success
      */
     @Contract("_, _ -> new")
-    public static <S, F> @NotNull Result<S, F> success(S value, Class<F> failureType) {
+    public static <S, F> @NotNull Result<S, F>
+    success(S value, Class<F> failureType) {
         return new Success<>(value);
     }
 
@@ -72,7 +73,8 @@ public abstract class Result<S, F> implements Serializable {
      * @return F wrapped in failure
      */
     @Contract("_, _ -> new")
-    public static <S, F> @NotNull Result<S, F> failure(F error, Class<S> successType) {
+    public static <S, F> @NotNull Result<S, F>
+    failure(F error, Class<S> successType) {
         return new Failure<>(error);
     }
 
@@ -85,8 +87,11 @@ public abstract class Result<S, F> implements Serializable {
      * @param onFailure the function to process the failure value, if this is a Failure
      * @param <R>       the type of the end result
      * @return The result of executing onSuccess if this result is a Success, or onFailure if it's a failure
+     * @param <R1> success fail type
+     * @param <R2> failure fail type
      */
-    public abstract <R, R1 extends R, R2 extends R> R either(Function<S, R1> onSuccess, Function<F, R2> onFailure);
+    public abstract <R, R1 extends R, R2 extends R> R
+    either(Function<S, R1> onSuccess, Function<F, R2> onFailure);
 
     /**
      * Applies a function to this Result. This permits inverting the calling convention, so that instead of the following:
@@ -121,6 +126,10 @@ public abstract class Result<S, F> implements Serializable {
      *                               .then(map(Shop::purchaseHat));
      * }
      * </pre>
+     * @param biMapper function to apply result to
+     * @param <T> parent type
+     * @param <T2> child type
+     * @return parent type of applying the mapper of result to T
      */
     public <T, T2 extends T> T then(@NotNull Function<Result<S, F>, T2> biMapper) {
         return biMapper.apply(this);
