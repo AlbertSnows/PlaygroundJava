@@ -2,6 +2,8 @@ package co.unruly.control.result;
 
 import co.unruly.control.pair.Pair;
 import co.unruly.control.pair.Pairs;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,13 +19,15 @@ import static java.util.stream.Stream.empty;
  * A set of common functions to convert from a <code>Result</code> to
  * an unwrapped value.
  */
+@SuppressWarnings("unused")
 public interface Resolvers {
 
     /**
      * Takes a Result where both success and failure types are the same, and returns
      * either the success or failure value as appropriate
      */
-    static <T> Function<Result<T, T>, T> collapse() {
+    @Contract(pure = true)
+    static <T> @NotNull Function<Result<T, T>, T> collapse() {
         return r -> r.either(identity(), identity());
     }
 
@@ -32,7 +36,8 @@ public interface Resolvers {
      * a failure, returns the result of applying the recovery function to the
      * failure value.
      */
-    static <OS, IS extends OS, FS extends OS, F> Function<Result<IS, F>, OS> ifFailed(Function<F, FS> recoveryFunction) {
+    @Contract(pure = true)
+    static <OS, IS extends OS, FS extends OS, F> @NotNull Function<Result<IS, F>, OS> ifFailed(Function<F, FS> recoveryFunction) {
         return r -> r.either(identity(), recoveryFunction);
     }
 
@@ -41,7 +46,8 @@ public interface Resolvers {
      * success value if it's a success, or throws the failure exception, wrapped in a
      * RuntimeException.
      */
-    static <S, X extends Exception> Function<Result<S, X>, S> getOrThrow() {
+    @Contract(pure = true)
+    static <S, X extends Exception> @NotNull Function<Result<S, X>, S> getOrThrow() {
         return r -> r.either(identity(), ex -> { throw new RuntimeException(ex); });
     }
 
@@ -50,7 +56,8 @@ public interface Resolvers {
      * a failure, throws the result of applying the exception converter to the
      * failure value.
      */
-    static <S, F> Function<Result<S, F>, S> getOrThrow(Function<F, RuntimeException> exceptionConverter) {
+    @Contract(pure = true)
+    static <S, F> @NotNull Function<Result<S, F>, S> getOrThrow(Function<F, RuntimeException> exceptionConverter) {
         return r -> r.either(identity(), failure -> { throw exceptionConverter.apply(failure); });
     }
 
@@ -59,7 +66,8 @@ public interface Resolvers {
      * or an empty stream if this is a failure. This is intended to be used to flat-map
      * over a stream of Results to extract a stream of just the successes.
      */
-    static <S, F> Function<Result<S, F>, Stream<S>> successes() {
+    @Contract(pure = true)
+    static <S, F> @NotNull Function<Result<S, F>, Stream<S>> successes() {
         return r -> r.either(Stream::of, __ -> empty());
     }
 
@@ -68,7 +76,8 @@ public interface Resolvers {
      * or an empty stream if this is a success. This is intended to be used to flat-map
      * over a stream of Results to extract a stream of just the failures.
      */
-    static <S, F> Function<Result<S, F>, Stream<F>> failures() {
+    @Contract(pure = true)
+    static <S, F> @NotNull Function<Result<S, F>, Stream<F>> failures() {
         return r -> r.either(__ -> empty(), Stream::of);
     }
 
@@ -76,7 +85,8 @@ public interface Resolvers {
      * Returns an Optional success value, which is present if this result was a failure
      * and empty if it was a failure.
      */
-    static <S, F> Function<Result<S, F>, Optional<S>> toOptional() {
+    @Contract(pure = true)
+    static <S, F> @NotNull Function<Result<S, F>, Optional<S>> toOptional() {
         return r -> r.either(Optional::of, __ -> Optional.empty());
     }
 
@@ -84,7 +94,8 @@ public interface Resolvers {
      * Returns an Optional failure value, which is present if this result was a failure
      * and empty if it was a success.
      */
-    static <S, F> Function<Result<S, F>, Optional<F>> toOptionalFailure() {
+    @Contract(pure = true)
+    static <S, F> @NotNull Function<Result<S, F>, Optional<F>> toOptionalFailure() {
         return r -> r.either(__ -> Optional.empty(), Optional::of);
     }
 
@@ -92,15 +103,17 @@ public interface Resolvers {
      * Collects a Stream of Results into a Pair of Lists, the left containing the unwrapped
      * success values, the right containing the unwrapped failures.
      */
-    static <S, F> Collector<Result<S, F>, Pair<List<S>, List<F>>, Pair<List<S>, List<F>>> split() {
-        return new ResultCollector<>(pair -> Pair.of(unmodifiableList(pair.left), unmodifiableList(pair.right)));
+    @Contract(value = " -> new", pure = true)
+    static <S, F> @NotNull Collector<Result<S, F>, Pair<List<S>, List<F>>, Pair<List<S>, List<F>>> split() {
+        return new ResultCollector<>(pair -> Pair.of(unmodifiableList(pair.left()), unmodifiableList(pair.right())));
     }
 
     /**
      * Collects a Stream of Results into a Result which contains a List of Successes, if all results in
      * the stream were successful, or a list of Failures if any failed.
      */
-    static <S, F> Collector<Result<S, F>, Pair<List<S>, List<F>>, Result<List<S>, List<F>>> allSucceeded() {
+    @Contract(value = " -> new", pure = true)
+    static <S, F> @NotNull Collector<Result<S, F>, Pair<List<S>, List<F>>, Result<List<S>, List<F>>> allSucceeded() {
         return new ResultCollector<>(Pairs::anyFailures);
     }
 
@@ -108,7 +121,8 @@ public interface Resolvers {
      * Collects a Stream of Results into a Result which contains a List of Successes, if any results in
      * the stream were successful, or a list of Failures if all failed.
      */
-    static <S, F> Collector<Result<S, F>, Pair<List<S>, List<F>>, Result<List<S>, List<F>>> anySucceeded() {
+    @Contract(value = " -> new", pure = true)
+    static <S, F> @NotNull Collector<Result<S, F>, Pair<List<S>, List<F>>, Result<List<S>, List<F>>> anySucceeded() {
         return new ResultCollector<>(Pairs::anySuccesses);
     }
 }
