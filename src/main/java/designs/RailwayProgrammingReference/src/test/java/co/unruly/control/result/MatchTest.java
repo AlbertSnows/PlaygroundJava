@@ -19,10 +19,10 @@ public class MatchTest {
                 ifType(B.class, B::messageForB),
                 ifType(C.class, C::messageForC)
         ).otherwise(A::message);
-
+        var bMatch = matchByType.apply(new B("Ketchup"));
         assertTrue(is("Cheese").matches(matchByType.apply(new A("Cheese"))));
-        assertTrue(is("I'm a B and I say Ketchup").matches(matchByType.apply(new A("Cheese"))));
-        assertTrue(is("I'm a C and I say Pickles").matches(matchByType.apply(new A("Cheese"))));
+        assertTrue(is("I'm a B and I say Ketchup").matches(bMatch));
+        assertTrue(is("I'm a C and I say Pickles").matches(matchByType.apply(new C("Pickles"))));
     }
 
     @Test
@@ -31,11 +31,11 @@ public class MatchTest {
                 ifEquals(4, x -> x + " sure looks like a 4 to me!"),
                 ifEquals(7, x -> x + " looks like one of them gosh-darned 7s?")
         ).otherwise(x -> "I have no idea what a " + x + " is though...");
-
+        var nineMatch = matchByType.apply(7);
         assertTrue(is("I have no idea what a 3 is though...").matches(matchByType.apply(3)));
         assertTrue(is("4 sure looks like a 4 to me!").matches(matchByType.apply(4)));
         assertTrue(is("I have no idea what a 6 is though...").matches(matchByType.apply(6)));
-        assertTrue(is("7 looks like one of them gosh-darned 7s?").matches(matchByType.apply(9)));
+        assertTrue(is("7 looks like one of them gosh-darned 7s?").matches(nineMatch));
     }
 
     @Test
