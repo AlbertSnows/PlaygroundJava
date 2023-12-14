@@ -322,8 +322,8 @@ public class ValidatorTest {
 
     @Contract("_, _ -> new")
     @SafeVarargs
-    private final <T, E> @NotNull FailedValidation<T, E> validationFailure(T value, E... errors) {
-        return new FailedValidation<T, E>(value, asList(errors));
+    private <T, E> @NotNull FailedValidation<T, E> validationFailure(T value, E... errors) {
+        return new FailedValidation<>(value, asList(errors));
     }
 
     private <T, E> @NotNull Matcher<Result<T, FailedValidation<T, E>>>

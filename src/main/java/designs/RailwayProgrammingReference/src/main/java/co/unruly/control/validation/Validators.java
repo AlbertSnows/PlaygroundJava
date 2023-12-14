@@ -20,6 +20,7 @@ import static co.unruly.control.result.Result.success;
 import static co.unruly.control.result.Transformers.onFailure;
 import static co.unruly.control.result.Transformers.recover;
 
+@SuppressWarnings("unused")
 public interface Validators {
 
     @Contract(pure = true)
@@ -67,7 +68,8 @@ public interface Validators {
     }
 
     @Contract(pure = true)
-    static <T, T1, E, X extends Exception> @NotNull Validator<T, E> tryOn(ThrowingFunction<T, T1, X> accessor, Function<Exception, E> onException, Validator<T1, E> innerValidator) {
+    static <T, T1, E, X extends Exception> @NotNull Validator<T, E>
+    tryOn(ThrowingFunction<T, T1, X> accessor, Function<Exception, E> onException, Validator<T1, E> innerValidator) {
         return t -> {
             try {
                 return innerValidator.validate(accessor.apply(t));
@@ -78,12 +80,14 @@ public interface Validators {
     }
 
     @Contract(pure = true)
-    static <T, T1, E> @NotNull Validator<T, E> onEach(Function<T, Iterable<T1>> iterator, Validator<T1, E> innerValidator) {
+    static <T, T1, E> @NotNull Validator<T, E>
+    onEach(Function<T, Iterable<T1>> iterator, Validator<T1, E> innerValidator) {
         return t -> StreamSupport.stream(iterator.apply(t).spliterator(), false).flatMap(innerValidator::validate);
     }
 
     @Contract(pure = true)
-    static <T, E> @NotNull Validator<T, E> tryTo(Validator<T, E> validatorWhichThrowsRuntimeExceptions, Function<RuntimeException, E> errorMapper) {
+    static <T, E> @NotNull Validator<T, E>
+    tryTo(Validator<T, E> validatorWhichThrowsRuntimeExceptions, Function<RuntimeException, E> errorMapper) {
         return t -> {
             try {
                 return validatorWhichThrowsRuntimeExceptions.validate(t);
