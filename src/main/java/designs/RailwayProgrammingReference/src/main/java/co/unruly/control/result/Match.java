@@ -85,6 +85,10 @@ public class Match {
         Function<I, O> otherwise(Function<I, O> baseCase);
     }
 
+    /**
+     * @param <I>
+     * @param <O>
+     */
     @FunctionalInterface
     public interface BoundMatchAttempt<I, O> {
         /**
