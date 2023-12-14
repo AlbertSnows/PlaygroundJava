@@ -12,7 +12,7 @@ import static co.unruly.control.result.Result.success;
 import static co.unruly.control.result.Transformers.attempt;
 import static co.unruly.control.result.Transformers.onSuccess;
 
-@SuppressWarnings("NewClassNamingConvention")
+@SuppressWarnings({"unused", "NewClassNamingConvention"})
 public class FunctionalErrorHandling {
 
     @Test

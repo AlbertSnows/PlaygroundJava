@@ -11,7 +11,7 @@ import static co.unruly.control.result.Introducers.tryTo;
 import static co.unruly.control.result.Resolvers.ifFailed;
 import static co.unruly.control.result.Transformers.*;
 
-@SuppressWarnings("NewClassNamingConvention")
+@SuppressWarnings({"unused", "NewClassNamingConvention"})
 public class ExceptionsInStreamsHandling {
 
 
@@ -71,7 +71,7 @@ public class ExceptionsInStreamsHandling {
         default String name() { return ""; }
         default int age() { return 0; }
 
-        default int calculateValue() throws CostUnknown { return 0; }
+        default int calculateValue() { return 0; }
         class CostUnknown extends Exception {}
     }
 
