@@ -11,8 +11,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static co.unruly.control.result.Result.failure;
-import static co.unruly.control.result.Result.success;
 import static co.unruly.control.result.Transformers.unwrapSuccesses;
 import static java.util.function.Function.identity;
 

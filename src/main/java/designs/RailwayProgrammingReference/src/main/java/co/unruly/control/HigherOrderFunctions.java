@@ -16,6 +16,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.iterate;
 
+@SuppressWarnings("unused")
 public interface HigherOrderFunctions {
 
     /**
@@ -30,6 +31,7 @@ public interface HigherOrderFunctions {
      * Takes a list of functions (which take and return the same type) and composes
      * them into a single function, applying the provided functions in order
      */
+    @SafeVarargs
     static <T> Function<T, T> compose(Function<T, T>... functions) {
         return compose(Stream.of(functions));
     }
@@ -46,6 +48,7 @@ public interface HigherOrderFunctions {
      * Takes a list of predicates and composes them into a single predicate, which
      * passes when all passed-in predicates pass
      */
+    @SafeVarargs
     static <T> Predicate<T> compose(Predicate<T>... functions) {
         return Stream.of(functions).reduce(__ -> true, Predicate::and);
     }
@@ -93,7 +96,7 @@ public interface HigherOrderFunctions {
 
         Iterator<A> aIterator = Spliterators.iterator(aSpliterator);
         Iterator<B> bIterator = Spliterators.iterator(bSpliterator);
-        Iterator<C> cIterator = new Iterator<C>() {
+        Iterator<C> cIterator = new Iterator<>() {
             @Override
             public boolean hasNext() {
                 return aIterator.hasNext() && bIterator.hasNext();
