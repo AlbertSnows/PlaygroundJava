@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import static co.unruly.control.ThrowingLambdas.ThrowingPredicate.throwingRuntime;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("RedundantThrows")
 public class ThrowingLambdasTest {
 
 //    @Test

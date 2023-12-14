@@ -62,7 +62,7 @@ public class PairTest {
     public void canReduceAStreamOfPairs() {
         Pair<Integer, String> reduced = Stream.of(Pair.of(2, "hello"), Pair.of(4, "goodbye"))
                 .collect(reducing(
-                        0, (x, y) -> x + y,
+                        0, Integer::sum,
                         "", String::concat
                 ));
 
