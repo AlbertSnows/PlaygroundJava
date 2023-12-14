@@ -28,7 +28,6 @@ dependencies {
 group = 'co.unruly'
 version = '0.8.14-SNAPSHOT'
 description = 'control'
-//java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 java {
     withSourcesJar()
@@ -38,18 +37,10 @@ java {
     }
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from(components.java)
-        }
-    }
-}
-
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
-tasks.withType(Javadoc) {
+tasks.withType(Javadoc).configureEach {
     options.encoding = 'UTF-8'
 }
