@@ -6,21 +6,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 
 /**
- * @param first
- * @param second
- * @param third
- * @param <A>
- * @param <B>
- * @param <C>
+ * @param first .
+ * @param second .
+ * @param third .
+ * @param <A> .
+ * @param <B> .
+ * @param <C> .
  */
 @SuppressWarnings("unused")
 public record Triple<A, B, C>(A first, B second, C third) {
 
     /**
-     * @param <A>
-     * @param <B>
-     * @param <C>
-     * @param <R>
+     * @param <A> .
+     * @param <B> .
+     * @param <C> .
+     * @param <R> result type
      */
     @FunctionalInterface
     public interface TriFunction<A, B, C, R> {
@@ -66,8 +66,9 @@ public record Triple<A, B, C>(A first, B second, C third) {
         return function.apply(first, second, third);
     }
 
+    @Contract(pure = true)
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "Triple{" +
                 "first=" + first +
                 ", second=" + second +
