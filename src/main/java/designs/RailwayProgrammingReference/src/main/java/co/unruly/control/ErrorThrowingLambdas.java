@@ -151,6 +151,11 @@ public interface ErrorThrowingLambdas {
      */
     @FunctionalInterface
     interface ThrowingPredicate<T, X extends Throwable> {
+        /**
+         * @param item input value
+         * @return T/f outcome of testing item
+         * @throws X exception type
+         */
         boolean test(T item) throws X;
 
 
