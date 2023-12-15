@@ -1,3 +1,3 @@
-[submodule "src/main/java/designs/rop/RailwayProgrammingReference"]
-	path = src/main/java/designs/rop/RailwayProgrammingReference
+[submodule "src/main/java/designs/rop"]
+	path = src/main/java/designs/rop
 	url = https://github.com/AlbertSnows/RailwayProgrammingReference
