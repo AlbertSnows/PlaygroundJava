@@ -19,9 +19,6 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-
-//import static co.unruly.control.result.Results.ifFailed;
 
 public class TryTest {
 
@@ -102,6 +99,7 @@ public class TryTest {
         return IntStream.range(1, Integer.parseInt(possiblyNumber) + 1).boxed();
     }
 
+    @SuppressWarnings("unused")
     static class CustomCheckedException extends Exception {
 
         public CustomCheckedException(String message) {
