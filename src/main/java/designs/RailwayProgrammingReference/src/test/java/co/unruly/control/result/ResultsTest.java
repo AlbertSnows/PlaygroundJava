@@ -103,7 +103,8 @@ public class ResultsTest {
 
 
         assertTrue(isSuccessOf(3).matches(six.then(attempt(halve))));
-        assertTrue(isFailureOf("Cannot halve an odd number into an integer").matches(five.then(attempt(halve))));
+        assertTrue(isFailureOf("Cannot halve an odd number into an integer")
+                .matches(five.then(attempt(halve))));
         assertTrue(isFailureOf("Cannot parse number").matches(failure.then(attempt(halve))));
     }
 
@@ -145,7 +146,8 @@ public class ResultsTest {
 
     @Test
     public void canStreamSuccesses() {
-        Stream<Result<Integer, String>> results = Stream.of(success(6), success(5), failure("darnit"));
+        Stream<Result<Integer, String>> results
+                = Stream.of(success(6), success(5), failure("darnit"));
 
         Stream<Integer> resultStream = results.flatMap(successes());
         List<Integer> successes = resultStream.collect(toList());
@@ -161,15 +163,20 @@ public class ResultsTest {
         Result<Integer, String> oddFive = Result.failure("Five is odd");
         Result<Integer, String> oddSeven = Result.failure("Seven is odd");
 
-        assertTrue(isSuccessOf(12).matches(evenSix.then(combineWith(evenTwo)).using((x, y) -> x * y)));
-        assertTrue(isFailureOf("Seven is odd").matches(evenSix.then(combineWith(oddSeven)).using((x, y) -> x * y)));
-        assertTrue(isFailureOf("Five is odd").matches(oddFive.then(combineWith(evenTwo)).using((x, y) -> x * y)));
-        assertTrue(isFailureOf("Five is odd").matches(oddFive.then(combineWith(oddSeven)).using((x, y) -> x * y)));
+        assertTrue(isSuccessOf(12)
+                .matches(evenSix.then(combineWith(evenTwo)).using((x, y) -> x * y)));
+        assertTrue(isFailureOf("Seven is odd")
+                .matches(evenSix.then(combineWith(oddSeven)).using((x, y) -> x * y)));
+        assertTrue(isFailureOf("Five is odd")
+                .matches(oddFive.then(combineWith(evenTwo)).using((x, y) -> x * y)));
+        assertTrue(isFailureOf("Five is odd")
+                .matches(oddFive.then(combineWith(oddSeven)).using((x, y) -> x * y)));
     }
 
     @Test
     public void canStreamFailures() {
-        Stream<Result<Integer, String>> results = Stream.of(success(6), success(5), failure("darnit"));
+        Stream<Result<Integer, String>> results
+                = Stream.of(success(6), success(5), failure("darnit"));
 
         List<String> failures = results.flatMap(failures()).toList();
 
@@ -180,16 +187,19 @@ public class ResultsTest {
     public void canExtractValuesFromMap() {
         Map<String, Integer> frenchNumberNames = mapOf(entry("un", 1), entry("deux", 2), entry("trois", 3));
 
-        Function<String, Result<Integer, String>> extractor = fromMap(frenchNumberNames, word -> String.format("%s is not a french number", word));
+        Function<String, Result<Integer, String>> extractor
+                = fromMap(frenchNumberNames, word -> String.format("%s is not a french number", word));
         var outcome = extractor.apply("deux");
         var successOfTwo = isSuccessOf(2);
         assertTrue(successOfTwo.matches(outcome));
-        assertTrue(isFailureOf("quattro is not a french number").matches(extractor.apply("quattro")));
+        assertTrue(isFailureOf("quattro is not a french number")
+                .matches(extractor.apply("quattro")));
     }
 
     @Test
     public void canConvertListOfResultsIntoResultOfList() {
-        List<Result<Integer, String>> results = asList(success(1), success(42), success(69));
+        List<Result<Integer, String>> results
+                = asList(success(1), success(42), success(69));
         Result<List<Integer>, List<String>> unwrapped = Lists.successesOrFailures(results);
 
         assertTrue(isSuccessOf(asList(1, 42, 69)).matches(unwrapped));
@@ -197,7 +207,8 @@ public class ResultsTest {
 
     @Test
     public void canConvertListOfResultsIntoFailureOfListOfReasons() {
-        List<Result<Integer, String>> results = asList(success(1), failure("cheese"), success(69), failure("hotdog"));
+        List<Result<Integer, String>> results
+                = asList(success(1), failure("cheese"), success(69), failure("hotdog"));
         Result<List<Integer>, List<String>> unwrapped = Lists.successesOrFailures(results);
 
         assertTrue(isFailureOf(asList("cheese", "hotdog")).matches(unwrapped));

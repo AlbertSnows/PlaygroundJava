@@ -1,5 +1,6 @@
 package co.unruly.control.result;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import java.util.List;
@@ -79,14 +80,14 @@ public class TryTest {
         ));
     }
 
-    private static String throwsRuntimeException(String instruction) {
+    private static @NotNull String throwsRuntimeException(String instruction) {
         if("throw".equals(instruction)) {
             throw new RuntimeException("This is a naughty method");
         }
         return "Today, I was good";
     }
 
-    private static String throwsCheckedException(String instruction) throws CustomCheckedException {
+    private static @NotNull String throwsCheckedException(String instruction) throws CustomCheckedException {
         if("throw".equals(instruction)) {
             throw new CustomCheckedException("This is a naughty method");
         }

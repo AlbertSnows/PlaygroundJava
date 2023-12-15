@@ -45,7 +45,8 @@ public class ValidatorTest {
 
     @Test
     public void canCreateValidatorsWithDynamicErrorMessages() {
-        Validator<Integer, String> isEven = acceptIf(divisibleBy(2), x -> String.format("%d is odd", x));
+        Validator<Integer, String> isEven =
+                acceptIf(divisibleBy(2), x -> String.format("%d is odd", x));
 
         Result<Integer, FailedValidation<Integer, String>> validate4 = isEven.apply(4);
         Result<Integer, FailedValidation<Integer, String>> validate5 = isEven.apply(5);
@@ -87,11 +88,13 @@ public class ValidatorTest {
     public void doesNotExecuteValidatorsIfAlreadyFailedAndOnlyReportingFirst() {
         Validator<Integer, String> fizzbuzz = firstOf(compose(
                 rejectIf(divisibleBy(3), "fizz"),
-                rejectIf(divisibleBy(5), x -> { throw new AssertionError("should not exercise this method"); })));
+                rejectIf(divisibleBy(5), x -> {
+                    throw new AssertionError("should not exercise this method"); })));
 
         Validator<Integer, String> biglittle = firstOf(compose(
                 rejectIf(x -> x > 10, "big"),
-                rejectIf(x -> x < 3, x -> { throw new AssertionError("should not exercise this method"); })));
+                rejectIf(x -> x < 3, x -> {
+                    throw new AssertionError("should not exercise this method"); })));
 
         Validator<Integer, String> combined = compose(fizzbuzz, biglittle);
 
@@ -116,7 +119,8 @@ public class ValidatorTest {
     public void canStreamFailures() {
         Validator<Integer, String> isEven = acceptIf(divisibleBy(2), "odd");
 
-        List<FailedValidation<Integer, String>> odds = Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
+        List<FailedValidation<Integer, String>> odds =
+                Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
                 .map(isEven)
                 .flatMap(failures())
                 .collect(toList());
@@ -201,11 +205,14 @@ public class ValidatorTest {
                 containsEvens
         );
 
-        Result<List<Integer>, FailedValidation<List<Integer>, String>> ofFiveNumbers = onlyChecksEvenLengthLists.apply(asList(1, 2, 3, 4, 5));
-        Result<List<Integer>, FailedValidation<List<Integer>, String>> ofSixNumbers = onlyChecksEvenLengthLists.apply(asList(1, 2, 3, 4, 5, 6));
+        Result<List<Integer>, FailedValidation<List<Integer>, String>> ofFiveNumbers
+                = onlyChecksEvenLengthLists.apply(asList(1, 2, 3, 4, 5));
+        Result<List<Integer>, FailedValidation<List<Integer>, String>> ofSixNumbers
+                = onlyChecksEvenLengthLists.apply(asList(1, 2, 3, 4, 5, 6));
 
         assertTrue(isSuccessOf(asList(1,2,3,4,5)).matches(ofFiveNumbers));
-        assertTrue(isFailedValidationOf(asList(1,2,3,4,5,6), "List contains even numbers").matches(ofSixNumbers));
+        assertTrue(isFailedValidationOf(asList(1,2,3,4,5,6), "List contains even numbers")
+                .matches(ofSixNumbers));
     }
 
     @Test
