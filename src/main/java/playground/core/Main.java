@@ -12,7 +12,7 @@ public class Main {
 //        var l =  new ArrayList<>();
 //        List<Pair<String, Object> > inputList = Collections.singletonList((Pair<String, Object>) l);
 
-
+        System.out.println("eee");
 
 
     }
