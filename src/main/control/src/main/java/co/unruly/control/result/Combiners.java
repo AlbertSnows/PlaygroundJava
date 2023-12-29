@@ -26,7 +26,7 @@ public interface Combiners {
      * @param <RS> right success type
      * @param <F> failure type
      * @param leftResult left result to merge
-     * @return first failure
+     * @return dF(x -> mergableResult) to use using on to get (LS, RS) -> ...
      * If either or both arguments are Failures, then this returns the first failure
      * it encountered.
      */
