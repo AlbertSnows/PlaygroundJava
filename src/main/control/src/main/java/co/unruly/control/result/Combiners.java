@@ -44,10 +44,11 @@ public interface Combiners {
             @Override
             public <C> Result<C, F> using(BiFunction<LS, RS, C> combiner) {
                 var curriedCombiner = curryCombiner(combiner);
-
-                return leftResult
-                        .then(attempt(s1 -> rightResult
-                                .then(attempt(s2 -> success(curriedCombiner.apply(s1).apply(s2))))));
+                Function<LS, Function<RS, Result<C, F>>> wrapCombinerIsSuccess =
+                        ls -> rs-> success(curriedCombiner.apply(ls).apply(rs));
+                Function<LS, Result<C, F>> combineWithRight =
+                        ls -> rightResult.then(attempt(wrapCombinerIsSuccess.apply(ls)));
+                return leftResult.then(attempt(combineWithRight));
             }
         };
     }
