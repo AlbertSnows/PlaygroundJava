@@ -68,7 +68,8 @@ public interface Introducers {
      * @return dF(x -> y) where x is S and y is a result type determined by testing x against test
      */
     @Contract(pure = true)
-    static <S, F> @NotNull Function<S, Result<S, F>> ifFalse(Predicate<S> test, Function<S, F> failureMapper) {
+    static <S, F> @NotNull Function<S, Result<S, F>>
+    ifFalse(Predicate<S> test, Function<S, F> failureMapper) {
         return val -> test.test(val) ? Result.success(val) : Result.failure(failureMapper.apply(val));
     }
 
