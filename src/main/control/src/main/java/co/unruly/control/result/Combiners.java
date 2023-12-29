@@ -34,7 +34,8 @@ public interface Combiners {
     @org.jetbrains.annotations.Contract(pure = true)
     static <LS, RS, F> Function<Result<RS, F>, MergeableResults<LS, RS, F>>
     combineWith(Result<LS, F> leftResult) {
-        // ugh ugh ugh we need an abstract class because otherwise it can't infer generics properly can i be sick now? ta
+        // ugh ugh ugh we need an abstract class because otherwise it can't infer generics properly
+        // can I be sick now? ta
         return rightResult -> new MergeableResults<>() {
             /**
              * @param combiner combining mechanism

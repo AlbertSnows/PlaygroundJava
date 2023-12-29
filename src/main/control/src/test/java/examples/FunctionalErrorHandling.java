@@ -38,7 +38,9 @@ public class FunctionalErrorHandling {
             = success(bread, Garbage.class).then(onSuccess(Bread::toast));
 
         // I am however good enough to put the eggs on toast
-        Result<ScrambledEggsOnToast, Garbage> eggsOnToast = scrambledEggs.then(combineWith(toast)).using(ScrambledEggsOnToast::new);
+        Result<ScrambledEggsOnToast, Garbage> eggsOnToast = scrambledEggs
+                .then(combineWith(toast))
+                .using(ScrambledEggsOnToast::new);
 
         @SuppressWarnings("unused")
         Breakfast breakfast = eggsOnToast.then(ifFailed(__ -> new BowlOfCornflakes()));
@@ -93,7 +95,7 @@ public class FunctionalErrorHandling {
         }
     }
 
-    private record ScrambledEggsOnToast(ScrambledEggs eggs, Toast toast) implements Breakfast {
+    private record ScrambledEggsOnToast(Toast toast, ScrambledEggs eggs)  implements Breakfast {
     }
 
     private static class BowlOfCornflakes implements Breakfast {
