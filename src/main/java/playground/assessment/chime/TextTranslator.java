@@ -1,4 +1,4 @@
-package playground.assessment.ch;
+package playground.assessment.chime;
 
 import designs.utility.stream.CharacterStream;
 import org.jetbrains.annotations.Contract;
@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class TextTranslator {
     public static final Map<Character, Integer> letter_to_digit = Map.ofEntries(
