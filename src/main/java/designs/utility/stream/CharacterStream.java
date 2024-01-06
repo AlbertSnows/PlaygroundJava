@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 public class CharacterStream {
 
     public static Stream<Character> of(char @NotNull [] arr) {
-        Stream<Character> cStream = IntStream.range(0, arr.length).mapToObj(i -> arr[i]);;
-        return cStream;
+        return IntStream.range(0, arr.length).mapToObj(i -> arr[i]);
     }
 }
