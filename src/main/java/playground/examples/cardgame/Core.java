@@ -9,18 +9,6 @@ package playground.examples.cardgame;
 // this continues until the players have no cards left
 // the player with the highest score wins
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import static playground.examples.cardgame.Advancers.advance;
-import static playground.examples.cardgame.Advancers.shouldAdvance;
-
 public class Core {
     public static void main(String[] args) {
         var initialState = CardGame.init();
