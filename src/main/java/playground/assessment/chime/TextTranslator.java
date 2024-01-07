@@ -50,31 +50,39 @@ public class TextTranslator {
     convert_code_to_word(String digit_as_string) {
         return "abc";
     }
-    @Contract(value = "_, _ -> new", pure = true)
-    private static @NotNull List<List<String>>
-    find_valid_word_combinations_for_input(int[] input_numbers, @NotNull ArrayList<String> valid_words_as_digits) {
+    private static @NotNull bundle
+    find_valid_word_combinations_for_input(int[] input_numbers,
+                                           @NotNull HashMap<String, String> valid_words_to_digits,
+                                           HashMap<String, String> visited) {
         var valid_word_combinations_of_input = new ArrayList<List<String>>();
-        for(String valid_digits : valid_words_as_digits) {
-            var digit_length = valid_digits.length();
-            var subset_to_check = Arrays.copyOfRange(input_numbers, 0, digit_length);
-            var input_subset_as_string = Arrays.stream(subset_to_check).mapToObj(String::valueOf).collect(Collectors.joining());
-            var matches_valid_digits = valid_digits.equals(input_subset_as_string);
+        for(String valid_word : valid_words_to_digits.keySet()) {
+            var valid_digits = valid_words_to_digits.get((valid_word));
+            if(!visited.containsKey(valid_digits)) {
+                var digit_length = valid_digits.length();
+                var subset_to_check = Arrays.copyOfRange(input_numbers, 0, digit_length);
+                var input_subset_as_string = Arrays.stream(subset_to_check).mapToObj(String::valueOf).collect(Collectors.joining());
+                var matches_valid_digits = valid_digits.equals(input_subset_as_string);
 
-            // if matches
-            if(matches_valid_digits && input_numbers.length == digit_length) {
-                var newList = new ArrayList<>(List.of(valid_digits));
-                valid_word_combinations_of_input.add(newList);
-            } else if(matches_valid_digits && digit_length < input_numbers.length) {
-                var remaining_subset = Arrays.copyOfRange(input_numbers, digit_length, input_numbers.length);
-                var matching_words_for_remaining_subset =
-                        find_valid_word_combinations_for_input(remaining_subset, valid_words_as_digits);
-                var matching_words_for_subset = matching_words_for_remaining_subset.stream()
-                        .peek(set -> set.add(valid_digits))
-                        .collect(Collectors.toCollection(ArrayList::new));
-                valid_word_combinations_of_input.addAll(matching_words_for_subset);
+                // if matches
+                if(matches_valid_digits && input_numbers.length == digit_length) {
+                    var newList = new ArrayList<>(List.of(valid_word));
+                    valid_word_combinations_of_input.add(newList);
+                    visited.put(valid_word, valid_digits);
+                } else if(matches_valid_digits && digit_length < input_numbers.length) {
+                    var remaining_subset = Arrays.copyOfRange(input_numbers, digit_length, input_numbers.length);
+                    var subset_bundle =
+                            find_valid_word_combinations_for_input(remaining_subset, valid_words_to_digits, visited);
+                    var matching_words_for_remaining_subset = subset_bundle.matching_word_sets();
+                    visited.putAll(subset_bundle.visited());
+                    var matching_words_for_subset = matching_words_for_remaining_subset.stream()
+                            .peek(set -> set.add(valid_word))
+                            .collect(Collectors.toCollection(ArrayList::new));
+                    valid_word_combinations_of_input.addAll(matching_words_for_subset);
+                    visited.put(valid_word, valid_digits);
+                }
             }
         }
-        return valid_word_combinations_of_input;
+        return new bundle(valid_word_combinations_of_input, visited);
     }
 
     @Contract(pure = true)
@@ -90,7 +98,7 @@ public class TextTranslator {
         var valid_digit_combinations = getLists();
         List<List<String>> valid_word_combinations = valid_digit_combinations.stream()
                 .map(set -> set.stream()
-                        .map(TextTranslator::convert_code_to_word)
+//                        .map(TextTranslator::convert_code_to_word)
                         .toList()
                 )
                 .toList();
@@ -106,12 +114,13 @@ public class TextTranslator {
         int[] input_numbers = {2, 2, 8, 2, 2, 8, 7,6,6,3,8,4,6,3};
         String[] valid_words = {"bat", "cat", "some", "time", "sometime"};
 
-        var code_to_word = new HashMap<String, String>();
+        var word_to_code = new HashMap<String, String>();
         for(var valid_word : valid_words) {
             var word_as_code = convert_word_to_code(valid_word);
-            code_to_word.put(valid_word, word_as_code);
+            word_to_code.put(valid_word, word_as_code);
         }
-        var valid_words_as_digits = new ArrayList<>(code_to_word.values());
-        return find_valid_word_combinations_for_input(input_numbers, valid_words_as_digits);
+        var valid_words_as_digits = new ArrayList<>(word_to_code.values());
+        var output = find_valid_word_combinations_for_input(input_numbers, word_to_code, new HashMap<>());
+        return output.matching_word_sets();
     }
 }
