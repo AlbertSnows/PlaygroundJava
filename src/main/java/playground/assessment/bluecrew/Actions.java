@@ -28,7 +28,7 @@ public class Actions {
                         "timestamp", Instant.parse(input.get(2)))),
                 COMMAND.OUT, input -> new Action(command, Map.of(
                         "name", input.get(1),
-                        "timestamp", Instant.parse(input.get(2)).getEpochSecond())),
+                        "timestamp", Instant.parse(input.get(2)))),
                 COMMAND.REMAINING, input -> new Action(command, Map.of("name", input.get(1))))
                 .get(command)
                 .apply(readCommand);
@@ -42,21 +42,22 @@ public class Actions {
     public static @NotNull Function<Map<String, Object>, TimeKeeper>
     addUser(TimeKeeper tk) { return data -> {
         String name = (String) data.get("name");
-        tk.users().put(name, new TimeUser(name, "out", (Long) data.get("timestamp")));
+        tk.users().put(name, new TimeUser(name, "out", Instant.now()));
         return tk;
     };}
     @Contract(pure = true)
     public static @NotNull Function<Map<String, Object>, TimeKeeper>
     clockIn(TimeKeeper tk) { return data -> {
         String name = (String) data.get("name");
-        tk.users().put(name, new TimeUser(name, "in", (Long) data.get("timestamp")));
+        var newTime = (Instant) data.get("timestamp");
+        tk.users().put(name, new TimeUser(name, "in", newTime));
         return tk;
     };}
     @Contract(pure = true)
     public static @NotNull Function<Map<String, Object>, TimeKeeper>
     clockOut(TimeKeeper tk) { return data -> {
         String name = (String) data.get("name");
-        Long newTime = (Long) data.get("timestamp");
+        Instant newTime = (Instant) data.get("timestamp");
         tk.users().put(name, new TimeUser(name, "out", newTime));
         return tk;
     };}
@@ -72,7 +73,7 @@ public class Actions {
         var clockedIn = Objects.equals(user.get().state(), "in");
         if(clockedIn) {
             var hourCurrently = Instant.now().atZone(ZoneId.of("UTC")).getHour();
-            var hourClockIn = Instant.ofEpochSecond(user.get().timestamp()).atZone(ZoneId.of("UTC")).getHour();
+            var hourClockIn = user.get().timestamp().atZone(ZoneId.of("UTC")).getHour();
             var hoursRemaining = hourCurrently - hourClockIn;
             System.out.printf("You have " + hoursRemaining + " hours left to work.%n");
         } else {
