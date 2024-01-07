@@ -1,5 +1,6 @@
 package playground.assessment.bluecrew;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -24,7 +25,7 @@ public class Entry {
                 List.of("out", "jim", "timestamp"),
                 List.of("remaining", "jim"));
         var commandList = parseInputs(input);
-        var initialTimeState = new TimeKeeper();
+        var initialTimeState = new TimeKeeper(new HashMap<>());
         TimeKeeper finalTimeState = commandList.stream()
                 .reduce(initialTimeState, Actions::applyUpdateCommands, (oldTK, newTK) -> newTK);
         System.out.println(finalTimeState);

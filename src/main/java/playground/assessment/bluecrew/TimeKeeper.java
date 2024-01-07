@@ -1,3 +1,5 @@
 package playground.assessment.bluecrew;
 
-public record TimeKeeper() { }
+import java.util.HashMap;
+
+public record TimeKeeper(HashMap<String, TimeUser> users) { }
