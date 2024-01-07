@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -18,17 +19,19 @@ public class Actions {
             "in", COMMAND.IN,
             "out", COMMAND.OUT,
             "remaining", COMMAND.REMAINING);
-    public static Action parseInput(@NotNull List<String> input) {
-        var command = COMMANDS_MAP.get(input.get(0));
-        return Map.of(
-                COMMAND.ADD, new Action(command, Map.of("name", input.get(1))),
-                COMMAND.IN, new Action(command, Map.of(
+    public static Action parseInput(@NotNull List<String> readCommand) {
+        var command = COMMANDS_MAP.get(readCommand.get(0));
+        return Map.<COMMAND, Function<List<String>, Action>>of(
+                COMMAND.ADD, input -> new Action(command, Map.of("name", input.get(1))),
+                COMMAND.IN, input -> new Action(command, Map.of(
+                        "name", input.get(1),
+                        "timestamp", Instant.parse(input.get(2)))),
+                COMMAND.OUT, input -> new Action(command, Map.of(
                         "name", input.get(1),
                         "timestamp", Instant.parse(input.get(2)).getEpochSecond())),
-                COMMAND.OUT, new Action(command, Map.of(
-                        "name", input.get(1),
-                        "timestamp", Instant.parse(input.get(2)).getEpochSecond())),
-                COMMAND.REMAINING, new Action(command, Map.of("name", input.get(1)))).get(command);
+                COMMAND.REMAINING, input -> new Action(command, Map.of("name", input.get(1))))
+                .get(command)
+                .apply(readCommand);
 
     }
     public static List<Action> parseInputs(@NotNull List<List<String>> input) {
@@ -39,32 +42,37 @@ public class Actions {
     public static @NotNull Function<Map<String, Object>, TimeKeeper>
     addUser(TimeKeeper tk) { return data -> {
         String name = (String) data.get("name");
-        tk.users().put("name", new TimeUser(name, "out", Instant.now()));
+        tk.users().put(name, new TimeUser(name, "out", (Long) data.get("timestamp")));
         return tk;
     };}
     @Contract(pure = true)
     public static @NotNull Function<Map<String, Object>, TimeKeeper>
     clockIn(TimeKeeper tk) { return data -> {
         String name = (String) data.get("name");
-        tk.users().put("name", new TimeUser(name, "in", Instant.now()));
+        tk.users().put(name, new TimeUser(name, "in", (Long) data.get("timestamp")));
         return tk;
     };}
     @Contract(pure = true)
     public static @NotNull Function<Map<String, Object>, TimeKeeper>
     clockOut(TimeKeeper tk) { return data -> {
         String name = (String) data.get("name");
-        tk.users().put("name", new TimeUser(name, "out", Instant.now()));
+        Long newTime = (Long) data.get("timestamp");
+        tk.users().put(name, new TimeUser(name, "out", newTime));
         return tk;
     };}
     @Contract(pure = true)
     public static @NotNull Function<Map<String, Object>, TimeKeeper>
     printRemaining(TimeKeeper tk) { return data -> {
         String name = (String) data.get("name");
-        var user = tk.users().get(name);
-        var clockedIn = Objects.equals(user.state(), "in");
+        var user = Optional.ofNullable(tk.users().get(name));
+        if(user.isEmpty()) {
+            System.out.println("User not found!");
+            return tk;
+        }
+        var clockedIn = Objects.equals(user.get().state(), "in");
         if(clockedIn) {
             var hourCurrently = Instant.now().atZone(ZoneId.of("UTC")).getHour();
-            var hourClockIn = user.timestamp().atZone(ZoneId.of("UTC")).getHour();
+            var hourClockIn = Instant.ofEpochSecond(user.get().timestamp()).atZone(ZoneId.of("UTC")).getHour();
             var hoursRemaining = hourCurrently - hourClockIn;
             System.out.printf("You have " + hoursRemaining + " hours left to work.%n");
         } else {
