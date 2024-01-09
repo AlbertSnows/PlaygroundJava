@@ -83,7 +83,7 @@ class WordDictionary {
         if(wordAsCharArray.length == 1 && firstChar != '.') {
             return currentNode != null && currentNode.isWord;
         } else if(wordAsCharArray.length == 1) {
-            return children.values().stream().anyMatch(n -> n.content == firstChar && n.isWord);
+            return children.values().stream().anyMatch(n -> n.isWord);
         } else if(currentNode == null && firstChar != '.') {
             return false;
         } else if(firstChar == '.') {
@@ -103,15 +103,15 @@ class WordDictionary {
 
     public static void main(String[] args) {
         var x = new WordDictionary();
-        x.addWord("at");
-        x.addWord("and");
-        x.addWord("an");
-        x.addWord("add");
-        x.addWord("bat");
+//        x.addWord("at");
+//        x.addWord("and");
+//        x.addWord("an");
+//        x.addWord("add");
+//        x.addWord("bat");
 //        x.addWord("bad");
 //        x.addWord("dad");
 //        x.addWord("mad");
-//        x.addWord("a");
+        x.addWord("a");
 //        x.addWord("a");
 //        var a = x.search("pad");
 //        var b = x.search("bad");
@@ -119,8 +119,8 @@ class WordDictionary {
 //        var d = x.search("b..");
 //        var e = x.search("aa");
 //        var f = x.search(".a");
-        var g = x.search("a");
-        var h = x.search("b.");
+//        var g = x.search("a");
+//        var h = x.search("b.");
         var j = x.search(".");
         var z = 1;
     }
