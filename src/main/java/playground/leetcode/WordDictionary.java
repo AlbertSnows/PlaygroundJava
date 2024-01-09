@@ -49,7 +49,7 @@ class WordDictionary {
     private boolean wordSearch(@NotNull  TrieNode node,
                                char @NotNull [] characters) {
         if(characters.length == 0) {
-            return true;
+            return node.isWord;
         }
         var wordLength = characters.length;
         var letterIndex = 0;
@@ -63,7 +63,7 @@ class WordDictionary {
                 stillSearching = nextNode != null;
                 node = nextNode;
                 letterIndex++;
-                found = letterIndex >= wordLength;
+                found = letterIndex >= wordLength && nextNode != null && nextNode.isWord;
             } else {
                 var remainingCharacters =
                         Arrays.copyOfRange(characters, letterIndex + 1, wordLength);
@@ -78,18 +78,21 @@ class WordDictionary {
 
     public boolean search(@NotNull String word) {
         var wordAsCharArray = word.toCharArray();
-        var currentNode = children.get(wordAsCharArray[0]);
-        if(currentNode == null && wordAsCharArray[0] != '.') {
+        var firstChar = wordAsCharArray[0];
+        var currentNode = children.get(firstChar);
+        if(wordAsCharArray.length == 1 && firstChar != '.') {
+            return currentNode != null && currentNode.isWord;
+        } else if(wordAsCharArray.length == 1) {
+            return children.values().stream().anyMatch(n -> n.content == firstChar && n.isWord);
+        } else if(currentNode == null && firstChar != '.') {
             return false;
-        } else if(wordAsCharArray[0] == '.') {
+        } else if(firstChar == '.') {
             var remainingCharacters =
                     Arrays.copyOfRange(wordAsCharArray, 1, wordAsCharArray.length);
             var outcome = children.values().stream()
-                    .anyMatch(pNode -> pNode.children.values().stream()
-                            .anyMatch(nextNode -> {
-                                //todo: fix the offset issue
-                                return wordSearch(nextNode, remainingCharacters);
-                            }));
+                    .anyMatch(pNode -> {
+                                return wordSearch(pNode, remainingCharacters);
+                    });
             return outcome;
         }
         var outcome = wordSearch(currentNode, Arrays.copyOfRange(wordAsCharArray, 1, wordAsCharArray.length));
@@ -100,12 +103,25 @@ class WordDictionary {
 
     public static void main(String[] args) {
         var x = new WordDictionary();
-        x.addWord("bad");
-        x.addWord("dad");
-        x.addWord("mad");
-        var a = x.search("pad");
-        var b = x.search("bad");
-        var c = x.search(".ad");
-        var d = x.search("b..");
+        x.addWord("at");
+        x.addWord("and");
+        x.addWord("an");
+        x.addWord("add");
+        x.addWord("bat");
+//        x.addWord("bad");
+//        x.addWord("dad");
+//        x.addWord("mad");
+//        x.addWord("a");
+//        x.addWord("a");
+//        var a = x.search("pad");
+//        var b = x.search("bad");
+//        var c = x.search(".ad");
+//        var d = x.search("b..");
+//        var e = x.search("aa");
+//        var f = x.search(".a");
+        var g = x.search("a");
+        var h = x.search("b.");
+        var j = x.search(".");
+        var z = 1;
     }
 }
