@@ -11,7 +11,7 @@ class Solution {
 
     public static boolean searchWord(
             char[][] board,
-            AbstractMap.SimpleEntry<Integer, Integer> currentPosition,
+            AbstractMap.SimpleEntry<Integer, Integer> currentPosition, // c -> r
             char[] letters,
             HashSet<AbstractMap.SimpleEntry<Integer, Integer>> visited) {
         if(letters.length == 0) {
@@ -34,19 +34,20 @@ class Solution {
         Function<AbstractMap.SimpleEntry<Integer, Integer>, Boolean> searchForNextLetter =
                 pair -> searchWord(board, pair, Arrays.copyOfRange(letters, 1, letters.length), visited);
         if(letterMatches) {
-            visited.add(new AbstractMap.SimpleEntry<>(columnIndex, rowIndex));
+            visited.add(currentPosition);
             var up = new AbstractMap.SimpleEntry<>(columnIndex, rowIndex - 1);
             var down = new AbstractMap.SimpleEntry<>(columnIndex, rowIndex + 1);
             var left = new AbstractMap.SimpleEntry<>(columnIndex - 1, rowIndex);
-            var right = new AbstractMap.SimpleEntry<>(columnIndex, rowIndex - 1);
+            var right = new AbstractMap.SimpleEntry<>(columnIndex + 1, rowIndex);
             var foundRestOfWord =
                     searchForNextLetter.apply(up) ||
-                            searchForNextLetter.apply(down) ||
-                            searchForNextLetter.apply(left) ||
-                            searchForNextLetter.apply(right);
+                    searchForNextLetter.apply(down) ||
+                    searchForNextLetter.apply(left) ||
+                    searchForNextLetter.apply(right);
             if(foundRestOfWord) {
                 return true;
             }
+            visited.remove(currentPosition);
         }
 
         return false;
@@ -77,11 +78,16 @@ class Solution {
 //                {{'A','B','C','E'},{'S','F','C','S'},{'A','D','E','E'}};
 
         char[][] board =
-                {{'A','B','C','E'},{'S','F','C','S'},{'A','D','E','E'}};
+//                {{'A','B','C','E'},{'S','F','C','S'},{'A','D','E','E'}}
+        {{'C','A','A'},{'A','A','A'},{'B','C','D'}}
+        ;
 //        [['A','B','C','E'],
 //        ['S','F','C','S'],
 //        ['A','D','E','E']];
-     var word = "ABCCED";
+     var word =
+             "AAB"
+//             "ABCCED"
+             ;
      var output = exist(board, word);
      System.out.println(output);
     }
