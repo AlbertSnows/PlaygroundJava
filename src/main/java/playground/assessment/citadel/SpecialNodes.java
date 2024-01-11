@@ -1,6 +1,5 @@
 package playground.assessment.citadel;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -20,7 +19,6 @@ class DistanceNode {
 
 public class SpecialNodes {
     public static void main(String[] args) {
-//        var amount = 7;
         var startingNodes = List.of(1, 1, 2, 2, 2, 3, 3, 3, 4, 5, 6, 7);
         var endingNodes =   List.of(2, 3, 1, 4, 6, 1, 7, 5, 2, 3, 2, 3);
         var indexes = IntStream.rangeClosed(0, startingNodes.size() - 1).boxed().toList();
@@ -53,7 +51,7 @@ public class SpecialNodes {
         var diameter = maxForNode.values().stream()
                 .reduce(0, (m, p) -> Math.max(m, p.dist), (p1, p2) -> p1);
         var specialPoints = maxForNode.values().stream()
-                .filter(p -> p.dist == diameter)
+                .filter(p -> Objects.equals(p.dist, diameter))
                 .toList();
         var specialNodes = nodeToNeighbors.keySet().stream()
                 .map(integers -> new AbstractMap.SimpleEntry<>(integers, 0))
@@ -85,29 +83,5 @@ public class SpecialNodes {
             }
         }
         return distanceMap;
-
-
-//        HashMap<Integer, HashMap<Integer, Integer>> finalStartToEndToDistance = startToEndToDistance;
-//        var neighborsToCheck = nodeNeighbors.stream()
-//                .filter(neighbor -> !finalStartToEndToDistance.containsKey(neighbor))
-//                .toList();
-
-        //        while(haveNodes) {
-//            var currentNode = nodes.pop();
-//            var foundPath = startToEndToDistance.get(startingNode).containsKey(currentNode);
-//            if(!foundPath) {
-////                startToEndToDistance.get(startingNode)
-////                        .put(currentNode, );
-//            }
-//        }
-//        return new HashMap<>();
-
-
-//        for(var neighbor : neighborsToCheck) {
-//            startToEndToDistance.get(startingNode).put(neighbor, depth + 1);
-//            startToEndToDistance.put()
-//                    findDistancesForNode(neighbor, nodeToNeighbors, startToEndToDistance, depth + 1);
-//        }
-//        return  startToEndToDistance;
     }
 }
