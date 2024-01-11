@@ -55,18 +55,15 @@ public class SpecialNodes {
         var specialPoints = maxForNode.values().stream()
                 .filter(p -> p.dist == diameter)
                 .toList();
-//        var diameterPairs = maxForNode.entrySet().stream()
-//                .filter(pair -> pair.getValue().getKey() >= diameter)
-//                .map(pair -> new AbstractMap.SimpleEntry<>(pair.getKey(), pair.getValue().getKey()))
-//                .toList();
-        var size = nodeToNeighbors.keySet().size();
-        var specialNodes = new ArrayList<>(Collections.nCopies(size, 0));
+        var specialNodes = nodeToNeighbors.keySet().stream()
+                .map(integers -> new AbstractMap.SimpleEntry<>(integers, 0))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
         for(var point : specialPoints) {
-            specialNodes.set(specialNodes.get(point.start), 1);
-            specialNodes.set(specialNodes.get(point.end), 1);
+            specialNodes.put(point.start, 1);
+            specialNodes.put(point.end, 1);
         }
         System.out.println(specialNodes);
-//        return specialNodes;
     }
 
     private static @NotNull HashMap<Integer, DistanceNode>
