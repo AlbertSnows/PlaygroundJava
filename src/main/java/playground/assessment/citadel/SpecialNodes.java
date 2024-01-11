@@ -1,17 +1,29 @@
 package playground.assessment.citadel;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+class DistanceNode {
+    public Integer start;
+    public Integer end;
+    public Integer dist;
+    DistanceNode(Integer start, Integer end, Integer dist) {
+        this.start = start;
+        this.end = end;
+        this.dist = dist;
+    }
+}
 
 public class SpecialNodes {
     public static void main(String[] args) {
 //        var amount = 7;
         var startingNodes = List.of(1, 1, 2, 2, 2, 3, 3, 3, 4, 5, 6, 7);
         var endingNodes =   List.of(2, 3, 1, 4, 6, 1, 7, 5, 2, 3, 2, 3);
-        var indexes = IntStream.rangeClosed(0, startingNodes.size()).boxed().toList();
+        var indexes = IntStream.rangeClosed(0, startingNodes.size() - 1).boxed().toList();
         var nodeToNeighbors = new HashMap<Integer, HashSet<Integer>>();
         for(var index : indexes) {
             var startingNode = startingNodes.get(index);
@@ -22,17 +34,19 @@ public class SpecialNodes {
                 nodeToNeighbors.put(startingNode, new HashSet<>(Set.of(endingNode)));
             }
         }
-        var startToEndToDistance = new HashMap<Integer, HashMap<Integer, Integer>>();
+        var startToEndToDistance = new HashMap<Integer, HashMap<Integer, DistanceNode>>();
         for(var startingNode : nodeToNeighbors.keySet()) {
-            startToEndToDistance = searchDeeper(startingNode, nodeToNeighbors, startToEndToDistance);
+            startToEndToDistance
+                    .put(startingNode, findDistancesForNode(startingNode, nodeToNeighbors));
+
         }
-        var maxForNode = new HashMap<Integer, AbstractMap.SimpleEntry<Integer, Integer>>();
+        var maxForNode = new HashMap<Integer, DistanceNode>();
         for(var startPairs : startToEndToDistance.entrySet()) {
-            AbstractMap.SimpleEntry<Integer, Integer> maxForCurrentNode = new AbstractMap.SimpleEntry<>(0, 0);
+            DistanceNode maxForCurrentNode = new DistanceNode(0, 0, 0);
             for(var endPairs : startPairs.getValue().entrySet()) {
-                maxForCurrentNode = maxForCurrentNode.getKey() > endPairs.getValue() ?
-                        maxForCurrentNode :
-                        new AbstractMap.SimpleEntry<>(endPairs.getValue(), endPairs.getKey());
+//                maxForCurrentNode = maxForCurrentNode.dist > endPairs.getValue().dist ?
+//                        maxForCurrentNode :
+//                        new DistanceNode(startPairs.getKey(), endPairs.getValue(), endPairs.getKey());
             }
             maxForNode.put(startPairs.getKey(), maxForCurrentNode);
         }
@@ -55,21 +69,48 @@ public class SpecialNodes {
 //        return specialNodes;
     }
 
-    private static HashMap<Integer, HashMap<Integer, Integer>>
-    searchDeeper(Integer startingNode,
-                 HashMap<Integer, HashSet<Integer>> nodeToNeighbors,
-                 HashMap<Integer, HashMap<Integer, Integer>> startToEndToDistance,
-                 Integer depth) {
-        startToEndToDistance.put(startingNode, new HashMap<>(Map.of(startingNode, 0)));
-        var nodeNeighbors = nodeToNeighbors.get(startingNode);
-        HashMap<Integer, HashMap<Integer, Integer>> finalStartToEndToDistance = startToEndToDistance;
-        var neighborsToCheck = nodeNeighbors.stream()
-                .filter(neighbor -> !finalStartToEndToDistance.containsKey(neighbor))
-                .toList();
-        for(var neighbor : neighborsToCheck) {
-            startToEndToDistance.get(startingNode).put(neighbor, depth + 1);
-            startToEndToDistance = searchDeeper(neighbor, nodeToNeighbors, startToEndToDistance, depth + 1);
+    private static @NotNull HashMap<Integer, DistanceNode>
+    findDistancesForNode(Integer startingNode, @NotNull HashMap<Integer, HashSet<Integer>> nodeToNeighbors) {
+        var startingDistanceNode = new DistanceNode(startingNode, startingNode, 0);
+        var distanceMap = new HashMap<>(Map.of(startingNode, startingDistanceNode));
+        var nodesToCheck = new ArrayDeque<DistanceNode>();
+        nodesToCheck.add(startingDistanceNode);
+        while(!nodesToCheck.isEmpty()) {
+            var currentNode = nodesToCheck.pop();
+            var nodeNeighbors = nodeToNeighbors.get(currentNode.end);
+            var neighborsToAdd = nodeNeighbors.stream()
+                    .filter(node -> !distanceMap.containsKey(node))
+                    .toList();
+            for(var neighborToAdd : neighborsToAdd) {
+                var nextNode = new DistanceNode(startingDistanceNode.start, neighborToAdd, currentNode.dist + 1);
+                distanceMap.put(neighborToAdd, nextNode);
+                nodesToCheck.add(nextNode);
+            }
         }
-        return  startToEndToDistance;
+        return distanceMap;
+
+
+//        HashMap<Integer, HashMap<Integer, Integer>> finalStartToEndToDistance = startToEndToDistance;
+//        var neighborsToCheck = nodeNeighbors.stream()
+//                .filter(neighbor -> !finalStartToEndToDistance.containsKey(neighbor))
+//                .toList();
+
+        //        while(haveNodes) {
+//            var currentNode = nodes.pop();
+//            var foundPath = startToEndToDistance.get(startingNode).containsKey(currentNode);
+//            if(!foundPath) {
+////                startToEndToDistance.get(startingNode)
+////                        .put(currentNode, );
+//            }
+//        }
+//        return new HashMap<>();
+
+
+//        for(var neighbor : neighborsToCheck) {
+//            startToEndToDistance.get(startingNode).put(neighbor, depth + 1);
+//            startToEndToDistance.put()
+//                    findDistancesForNode(neighbor, nodeToNeighbors, startToEndToDistance, depth + 1);
+//        }
+//        return  startToEndToDistance;
     }
 }
