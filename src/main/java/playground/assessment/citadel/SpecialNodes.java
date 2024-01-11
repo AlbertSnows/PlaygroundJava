@@ -36,34 +36,34 @@ public class SpecialNodes {
         }
         var startToEndToDistance = new HashMap<Integer, HashMap<Integer, DistanceNode>>();
         for(var startingNode : nodeToNeighbors.keySet()) {
-            startToEndToDistance
-                    .put(startingNode, findDistancesForNode(startingNode, nodeToNeighbors));
-
+            startToEndToDistance.put(startingNode, findDistancesForNode(startingNode, nodeToNeighbors));
         }
         var maxForNode = new HashMap<Integer, DistanceNode>();
         for(var startPairs : startToEndToDistance.entrySet()) {
             DistanceNode maxForCurrentNode = new DistanceNode(0, 0, 0);
             for(var endPairs : startPairs.getValue().entrySet()) {
-//                maxForCurrentNode = maxForCurrentNode.dist > endPairs.getValue().dist ?
-//                        maxForCurrentNode :
-//                        new DistanceNode(startPairs.getKey(), endPairs.getValue(), endPairs.getKey());
+                var endNode = endPairs.getValue();
+                var endNodeIsLarger = endNode.dist > maxForCurrentNode.dist;
+                if(endNodeIsLarger) {
+                    maxForCurrentNode = endNode;
+                }
             }
             maxForNode.put(startPairs.getKey(), maxForCurrentNode);
         }
-        int diameter = 0;
-        for(var startToMaxAndEndPair : maxForNode.entrySet()) {
-            diameter = Math.max(diameter, startToMaxAndEndPair.getKey());
-        }
-        Integer finalDiameter = diameter;
-        var diameterPairs = maxForNode.entrySet().stream()
-                .filter(pair -> pair.getValue().getKey() >= finalDiameter)
-                .map(pair -> new AbstractMap.SimpleEntry<>(pair.getKey(), pair.getValue().getKey()))
+        var diameter = maxForNode.values().stream()
+                .reduce(0, (m, p) -> Math.max(m, p.dist), (p1, p2) -> p1);
+        var specialPoints = maxForNode.values().stream()
+                .filter(p -> p.dist == diameter)
                 .toList();
+//        var diameterPairs = maxForNode.entrySet().stream()
+//                .filter(pair -> pair.getValue().getKey() >= diameter)
+//                .map(pair -> new AbstractMap.SimpleEntry<>(pair.getKey(), pair.getValue().getKey()))
+//                .toList();
         var size = nodeToNeighbors.keySet().size();
         var specialNodes = new ArrayList<>(Collections.nCopies(size, 0));
-        for(var pair : diameterPairs) {
-            specialNodes.set(specialNodes.get(pair.getKey()), 1);
-            specialNodes.set(specialNodes.get(pair.getValue()), 1);
+        for(var point : specialPoints) {
+            specialNodes.set(specialNodes.get(point.start), 1);
+            specialNodes.set(specialNodes.get(point.end), 1);
         }
         System.out.println(specialNodes);
 //        return specialNodes;
