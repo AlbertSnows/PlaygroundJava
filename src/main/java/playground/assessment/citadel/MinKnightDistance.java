@@ -35,25 +35,29 @@ public class MinKnightDistance {
     private static Integer searchForPoint(int boardSize, int endCol, int endRow) {
         while(!possibleSpaces.isEmpty()) {
             var travelPoint = possibleSpaces.pop();
-            if(travelPoint.x == endCol && travelPoint.y == endRow) {
-                return travelPoint.dist;
-            }
             for(var moveAdjustment : moveModifications) {
                 var newSpot = new DistancePoint(
                         travelPoint.x + moveAdjustment.getKey(),
                         travelPoint.y + moveAdjustment.getValue(),
                         travelPoint.dist + 1);
+                // bonus: add check in here
                 if(withinBounds(boardSize, newSpot.x, newSpot.y) && !visited.contains(newSpot)) {
-                    possibleSpaces.add(newSpot);
+                    if(newSpot.x == endCol && newSpot.y == endRow) {
+                        return newSpot.dist;
+                    } else {
+                        possibleSpaces.add(newSpot);
+                    }
                 }
             }
+            visited.add(travelPoint);
         }
         return -1;
     }
 
     public static void main(String[] args) {
+        System.out.println("Starting...");
         var boardSize = 9;
-        var startCol = 5;
+        var startCol = 3;
         var startRow = 4;
         var endCol = 9;
         var endRow = 4;
