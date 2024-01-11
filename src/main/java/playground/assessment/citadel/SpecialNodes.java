@@ -24,7 +24,7 @@ public class SpecialNodes {
         }
         var startToEndToDistance = new HashMap<Integer, HashMap<Integer, Integer>>();
         for(var startingNode : nodeToNeighbors.keySet()) {
-            startToEndToDistance = searchDeeper(nodeToNeighbors, startToEndToDistance);
+            startToEndToDistance = searchDeeper(startingNode, nodeToNeighbors, startToEndToDistance);
         }
         var maxForNode = new HashMap<Integer, AbstractMap.SimpleEntry<Integer, Integer>>();
         for(var startPairs : startToEndToDistance.entrySet()) {
@@ -56,6 +56,20 @@ public class SpecialNodes {
     }
 
     private static HashMap<Integer, HashMap<Integer, Integer>>
-    searchDeeper() {
+    searchDeeper(Integer startingNode,
+                 HashMap<Integer, HashSet<Integer>> nodeToNeighbors,
+                 HashMap<Integer, HashMap<Integer, Integer>> startToEndToDistance,
+                 Integer depth) {
+        startToEndToDistance.put(startingNode, new HashMap<>(Map.of(startingNode, 0)));
+        var nodeNeighbors = nodeToNeighbors.get(startingNode);
+        HashMap<Integer, HashMap<Integer, Integer>> finalStartToEndToDistance = startToEndToDistance;
+        var neighborsToCheck = nodeNeighbors.stream()
+                .filter(neighbor -> !finalStartToEndToDistance.containsKey(neighbor))
+                .toList();
+        for(var neighbor : neighborsToCheck) {
+            startToEndToDistance.get(startingNode).put(neighbor, depth + 1);
+            startToEndToDistance = searchDeeper(neighbor, nodeToNeighbors, startToEndToDistance, depth + 1);
+        }
+        return  startToEndToDistance;
     }
 }
