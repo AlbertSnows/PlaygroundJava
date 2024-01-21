@@ -1,4 +1,4 @@
-package playground.assessment.bluecrew;
+package playground.assessment.bluecrew.timekeeper;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

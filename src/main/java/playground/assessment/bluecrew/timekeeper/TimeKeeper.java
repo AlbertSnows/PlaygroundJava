@@ -1,4 +1,4 @@
-package playground.assessment.bluecrew;
+package playground.assessment.bluecrew.timekeeper;
 
 import java.util.HashMap;
 

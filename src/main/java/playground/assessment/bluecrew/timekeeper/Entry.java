@@ -1,11 +1,9 @@
-package playground.assessment.bluecrew;
+package playground.assessment.bluecrew.timekeeper;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.BiFunction;
 
-import static playground.assessment.bluecrew.Actions.applyUpdateCommands;
-import static playground.assessment.bluecrew.Actions.parseInputs;
+import static playground.assessment.bluecrew.timekeeper.Actions.parseInputs;
 
 /**
  * Timekeeping

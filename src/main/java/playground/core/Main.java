@@ -1,5 +1,9 @@
 package playground.core;
 
+import java.util.*;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
@@ -9,10 +13,10 @@ public class Main {
         // IntelliJ IDEA suggests fixing it.
         System.out.println("Hello and welcome!");
         // Press Shift+F10 or click the green arrow button in the gutter to run the code.
-//        var l =  new ArrayList<>();
-//        List<Pair<String, Object> > inputList = Collections.singletonList((Pair<String, Object>) l);
 
-        System.out.println("eee");
+
+
+        System.out.println(0);
 
 
     }
