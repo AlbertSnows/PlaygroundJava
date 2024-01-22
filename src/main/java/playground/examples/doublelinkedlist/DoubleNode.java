@@ -27,10 +27,6 @@ public class DoubleNode<C> {
         nodeList.get(0).priorTo(nodeList.get(1));
         return nodeList.get(0);
     }
-    public DoubleNode<C> content(C data) {
-        this.content = data;
-        return this;
-    }
     public DoubleNode<C> aheadOf(DoubleNode<C> prior) {
         this.prev = prior;
         return this;
