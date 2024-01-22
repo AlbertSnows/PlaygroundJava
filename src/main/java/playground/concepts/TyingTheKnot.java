@@ -10,16 +10,12 @@ public class TyingTheKnot {
     @Contract("_, _, _ -> new")
     public static <T> @NotNull Pair<DLNode<T>>
     tieRecursiveList(Thunk<DLNode<T>> lastNodeHolder, @NotNull LinkedList<T> listOfContent, Thunk<DLNode<T>> firstNodeHolder) {
-        if (listOfContent.isEmpty()) {
-            return new Pair<>(firstNodeHolder, lastNodeHolder);
-        } else {
-            T firstValue = listOfContent.pop();
-            Thunk<DLNode<T>> firstNode = new Thunk<>();
-            // build it backwards?
-            Pair<DLNode<T>> secondNodeWithLastNode = buildNodeLayer(firstNode, listOfContent, firstNodeHolder);
-            firstNode.hold(new DLNode<>(lastNodeHolder, firstValue, secondNodeWithLastNode.left()));
-            return new Pair<>(firstNode, secondNodeWithLastNode.right());
-        }
+        T firstValue = listOfContent.pop();
+        Thunk<DLNode<T>> firstNode = new Thunk<>();
+        // build it backwards?
+        Pair<DLNode<T>> secondNodeWithLastNode = buildNodeLayer(firstNode, listOfContent, firstNodeHolder);
+        firstNode.hold(new DLNode<>(lastNodeHolder, firstValue, secondNodeWithLastNode.left()));
+        return new Pair<>(firstNode, secondNodeWithLastNode.right());
     }
     @Contract("_, _, _ -> new")
     public static <T> @NotNull Pair<DLNode<T>>
