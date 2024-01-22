@@ -14,13 +14,13 @@ public class Thunk<T> {
     public Thunk() {
         value = null;
     }
-    public T getValue() {
+    public T get() {
         if (value==null) {
             throw new RuntimeException("should never happen!");
         }
         return value;
     }
-    public void setValue(T value) {
+    public void hold(T value) {
         this.value = value;
     }
 }

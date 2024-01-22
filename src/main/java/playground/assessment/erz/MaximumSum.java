@@ -56,10 +56,10 @@ public class MaximumSum {
 
 
 
-        // quickly find first and last digit
+        // quickly find left and last digit
         // associate that with the number
         // find largest sum
-        // iterate, get first and last
+        // iterate, get left and last
         // {45: [405, 45, 4005]}
         // sort it, add last two
 

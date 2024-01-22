@@ -1,4 +1,4 @@
 package playground.concepts;
 
-public record Pair<T>(Thunk<T> first, Thunk<T> second) {
+public record Pair<T>(Thunk<T> left, Thunk<T> right) {
 }
