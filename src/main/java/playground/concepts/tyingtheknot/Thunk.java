@@ -1,4 +1,4 @@
-package playground.concepts;
+package playground.concepts.tyingtheknot;
 
 /**
  * a thunk is a subroutine used to inject a calculation into another subroutine.

@@ -1,4 +1,4 @@
-package playground.concepts;
+package playground.concepts.tyingtheknot;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

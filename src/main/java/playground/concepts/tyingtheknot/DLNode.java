@@ -1,4 +1,4 @@
-package playground.concepts;
+package playground.concepts.tyingtheknot;
 
 public class DLNode<T> {
     private Thunk<DLNode<T>> previous;
