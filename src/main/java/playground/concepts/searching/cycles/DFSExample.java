@@ -1,9 +1,9 @@
-package playground.concepts.searching;
+package playground.concepts.searching.cycles;
 
 import org.jetbrains.annotations.NotNull;
+import playground.concepts.searching.Node;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 public class DFSExample {
     public static boolean hasCycle(@NotNull HashMap<Integer, Node> valuesToNode) {

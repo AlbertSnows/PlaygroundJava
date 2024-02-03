@@ -1,8 +1,8 @@
-package playground.concepts.searching;
+package playground.concepts.searching.cycles;
 
 import org.jetbrains.annotations.NotNull;
+import playground.concepts.searching.Node;
 
-import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Stack;
